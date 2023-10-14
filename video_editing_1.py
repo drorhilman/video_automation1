@@ -11,9 +11,10 @@ import tkinter as tk
 from tkinter import ttk
 from ui_functions import center_window, create_slider, create_entry_with_label
 
-# custom configs:
+# custom CONST:
 fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-
+DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
+DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
 
 # ==========================   UI     ================================
 
@@ -73,13 +74,13 @@ def main():
     center_window(root, 500, 600)
 
     builtins.source_path_entry = create_entry_with_label(
-        root, "Source Path", "C:\\Users\\Ben\\Desktop\\before"
+        root, "Source Path", DEFAULT_SOURCE
     )
     builtins.target_path_entry = create_entry_with_label(
-        root, "Target Path", "C:\\Users\\Ben\\Desktop\\after"
+        root, "Target Path", DEFAULT_TARGET
     )
-    builtins.speed_slider = create_slider(root, "Speed %", -100, 100, -20)
 
+    builtins.speed_slider = create_slider(root, "Speed %", -100, 100, -20)
     builtins.zoom_slider = create_slider(root, "Zoom %", 0, 100, 60)
     builtins.sharpen_slider = create_slider(root, "Sharpen %", -100, 100, 0.1)
     builtins.contrast_slider = create_slider(root, "Contrast %", -100, 100, 3)

@@ -255,7 +255,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def main():\n    root = tk.Tk()\n    root.title(\"Video Frame Fixer\")\n    center_window(root, 500, 600)\n    builtins.source_path_entry = create_entry_with_label(\n        root, \"Source Path\", \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\n    )\n    builtins.target_path_entry = create_entry_with_label(\n        root, \"Target Path\", \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n    )",
+        "peekOfCode": "def main():\n    root = tk.Tk()\n    root.title(\"Video Frame Fixer\")\n    center_window(root, 500, 600)\n    builtins.source_path_entry = create_entry_with_label(\n        root, \"Source Path\", DEFAULT_SOURCE\n    )\n    builtins.target_path_entry = create_entry_with_label(\n        root, \"Target Path\", DEFAULT_TARGET\n    )",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -264,7 +264,25 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_SOURCE",
+        "kind": 5,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "DEFAULT_TARGET",
+        "kind": 5,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,",
         "detail": "video_editing_1",
         "documentation": {}
     }
