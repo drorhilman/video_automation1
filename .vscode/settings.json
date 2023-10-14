@@ -3,6 +3,7 @@
         "fourcc",
         "padx",
         "pady",
-        "textvariable"
+        "textvariable",
+        "unsharp"
     ]
 }
