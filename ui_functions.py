@@ -12,7 +12,9 @@ def create_slider(root, label, from_, to_, initial_value):
     var.set(initial_value)
 
     def update_slider(val):
-        slider.set(float(var.get()))
+        if val == "":
+            val = 0
+        slider.set(float(val))
 
     def update_var(val):
         var.set(str(slider.get()))

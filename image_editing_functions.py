@@ -2,10 +2,21 @@ import cv2
 import numpy as np
 
 
+def shift_frame(frame:np.array, x: int, y: int):
+    if x==0 and y==0:
+        return frame
+    h, w, _ = frame.shape
+    M = np.float32([[1, 0, x], [0, 1, y]])
+    shifted = cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])
+    return shifted
+
+
 def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:
     """
     Sharpens the given frame using an unsharp mask with the specified sharpening percentage.
     """
+    if percentage == 0:
+        return frame
     percentage = max(0, min(100, percentage)) / 100
     frame_float = frame.astype(np.float64)
     blurred = cv2.GaussianBlur(frame_float, (0, 0), sigmaX=3, sigmaY=3)
@@ -47,6 +58,8 @@ def adjust_contrast(frame: np.ndarray, percentage: float):
 
 
 def adjust_saturation(frame: np.ndarray, percentage: float):
+    if percentage == 0:
+        return frame
     saturation_scale = (100 + percentage) / 100
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
@@ -56,12 +69,16 @@ def adjust_saturation(frame: np.ndarray, percentage: float):
 
 
 def add_shadow(frame: np.ndarray, percentage: float):
+    if percentage == 0:
+        return frame
     shadow_intensity = percentage / 100.0
     shadow_frame = frame * (1 - shadow_intensity)
     return shadow_frame.astype(np.uint8)
 
 
 def add_highlight(frame: np.ndarray, percentage: float):
+    if percentage == 0:
+        return frame
     highlight_intensity = percentage / 100.0
     highlight_frame = frame + (255 - frame) * highlight_intensity
     np.clip(highlight_frame, 0, 255, out=highlight_frame)
@@ -78,7 +95,10 @@ def fix_frame(
     height=1080,
     shadow_percentage=0,
     highlight_percentage=0,
+    shift_x=0, 
+    shift_y=0
 ):
+    frame = shift_frame(frame, shift_x, shift_y)
     frame = zoom(frame, percentage=zoom_percentage)
     frame = sharpen_image(frame, percentage=sharpen_percentage)
     frame = adjust_contrast(frame, percentage=contrast_percentage)
@@ -87,8 +107,27 @@ def fix_frame(
         frame = add_shadow(frame, shadow_percentage)
     if highlight_percentage != 0:
         frame = add_highlight(frame, highlight_percentage)
-    frame = resize_frame(frame, width=width, height=height)
+    if width != 0 and height != 0: 
+        frame = resize_frame(frame, width=width, height=height)
     return frame
+
+
+def compress_with_ffmpg(input_file: str, output_file: str, target_bitrate="7000k", crf_value="18"):
+    import subprocess
+    ffmpeg_command = [
+        "ffmpeg",
+        "-i",
+        str(input_file),
+        "-c:v",
+        "libx264",
+        "-b:v",
+        target_bitrate,
+        "-crf",
+        crf_value,
+        "-an",  # Remove audio
+        str(output_file),
+    ]
+    subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 #  ============= DOCS .... ==============================
