@@ -61,7 +61,7 @@ def run_script():
 
             frame = fix_frame(frame, **params)
             out.write(frame)
-            if i == 240: break
+            # if i == 240: break
 
         # Release resources
         video_capture.release()
@@ -78,9 +78,6 @@ def run_script():
 
 
     # Now compress the file with ffmpeg
-
-
-
 
 
 
