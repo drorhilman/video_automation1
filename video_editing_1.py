@@ -7,6 +7,8 @@ from tqdm import tqdm
 from image_editing_functions import speed, fix_frame, compress_with_ffmpg
 import tkinter as tk
 from tkinter import ttk
+import customtkinter as ctk
+
 from ui_functions import center_window, create_slider, create_entry_with_label
 
 # custom CONST:
@@ -78,32 +80,42 @@ def run_script():
 
 
 def main():
-    root = tk.Tk()
+    root = ctk.CTk()
     root.title("Video Frame Fixer")
-    center_window(root, 500, 600)
 
+    left_frame = ctk.CTkFrame(root, width=400)
+    left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)
+
+    # Add widgets to the left frame
     builtins.source_path_entry = create_entry_with_label(
-        root, "Source Path", DEFAULT_SOURCE
+        left_frame, "Source Path", DEFAULT_SOURCE
     )
     builtins.target_path_entry = create_entry_with_label(
-        root, "Target Path", DEFAULT_TARGET
+        left_frame, "Target Path", DEFAULT_TARGET
     )
 
-    builtins.speed_slider = create_slider(root, "Speed %", -100, 100, 20)
-    builtins.zoom_slider = create_slider(root, "Zoom %", 0, 100, 60)
-    builtins.shift_left = create_slider(root, "Shift →", -500, 500, 0)
-    builtins.shift_down = create_slider(root, "shift ↓ ", -500, 500, 0)
-    builtins.sharpen_slider = create_slider(root, "Sharpen %", -100, 100, 0)
-    builtins.contrast_slider = create_slider(root, "Contrast %", -100, 100, 3)
-    builtins.saturation_slider = create_slider(root, "Saturation %", -100, 100, -20)
-    builtins.shadow_slider = create_slider(root, "Shadow %", -100, 100, 0)
-    builtins.highlight_slider = create_slider(root, "Highlight %", -100, 100, 0)
+    builtins.speed_slider = create_slider(left_frame, "Speed %", -100, 100, 20)
+    builtins.zoom_slider = create_slider(left_frame, "Zoom %", 0, 100, 60)
+    builtins.shift_left = create_slider(left_frame, "Shift →", -500, 500, 0)
+    builtins.shift_down = create_slider(left_frame, "shift ↓ ", -500, 500, 0)
+    builtins.sharpen_slider = create_slider(left_frame, "Sharpen %", -100, 100, 0)
+    builtins.contrast_slider = create_slider(left_frame, "Contrast %", -100, 100, 3)
+    builtins.saturation_slider = create_slider(
+        left_frame, "Saturation %", -100, 100, -20
+    )
+    builtins.shadow_slider = create_slider(left_frame, "Shadow %", -100, 100, 0)
+    builtins.highlight_slider = create_slider(left_frame, "Highlight %", -100, 100, 0)
 
-    builtins.width_entry = create_entry_with_label(root, "width:", "3840")
-    builtins.height_entry = create_entry_with_label(root, "height:", "2160")
+    builtins.width_entry = create_entry_with_label(left_frame, "width:", "3840")
+    builtins.height_entry = create_entry_with_label(left_frame, "height:", "2160")
 
-    ttk.Button(root, text="Start", command=run_script).pack()
+    ctk.CTkButton(left_frame, text="Start", command=run_script).pack()
 
+    # -----------------------------------------------------------
+    right_frame = ctk.CTkFrame(root, width=800)
+    right_frame.pack(side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True)
+
+    center_window(root, width=1200, height=600)
     root.mainloop()
 
 
