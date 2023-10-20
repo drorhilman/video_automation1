@@ -3,6 +3,7 @@
         "customtkinter",
         "ffmpg",
         "fourcc",
+        "fromarray",
         "padx",
         "pady",
         "textvariable",

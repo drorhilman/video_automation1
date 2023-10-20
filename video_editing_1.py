@@ -1,15 +1,18 @@
 from pathlib import Path
 import cv2
 import os
-import tkinter as tk
 import builtins
 from tqdm import tqdm
 from image_editing_functions import speed, fix_frame, compress_with_ffmpg
-import tkinter as tk
-from tkinter import ttk
-import customtkinter as ctk
+import customtkinter as ctk  # type: ignore
 
-from ui_functions import center_window, create_slider, create_entry_with_label
+
+from ui_functions import (
+    center_window,
+    create_slider,
+    create_entry_with_label,
+    display_frame,
+)
 
 # custom CONST:
 fourcc = cv2.VideoWriter_fourcc(*"mp4v")
@@ -23,10 +26,7 @@ if Path("test/input").exists():
 # ==========================   UI     ================================
 
 
-def run_script():
-    file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
-    target_path = builtins.target_path_entry.get()
-    speed_percentage = float(builtins.speed_slider[0].get())
+def get_params_from_ui():
     width = int(builtins.width_entry.get())
     height = int(builtins.height_entry.get())
     params = {
@@ -41,6 +41,14 @@ def run_script():
         "shadow_percentage": float(builtins.shadow_slider[0].get()),
         "highlight_percentage": float(builtins.highlight_slider[0].get()),
     }
+    return params, width, height
+
+
+def run_script():
+    file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
+    target_path = builtins.target_path_entry.get()
+    speed_percentage = float(builtins.speed_slider[0].get())
+    params, width, height = get_params_from_ui()
 
     for file_path in tqdm(file_paths):
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
@@ -79,11 +87,32 @@ def run_script():
     # Now compress the file with ffmpeg
 
 
+def load_first_frame(frame=None):
+    ret = True
+    if frame is None:
+        file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
+        video_capture = cv2.VideoCapture(str(file_paths[0]))
+        ret, frame = video_capture.read()
+    if ret:
+        display_frame(frame, builtins.right_frame)
+    return ret, frame
+
+
+def update_loaded_frame():
+    ret, frame = load_first_frame()
+    if ret:
+        params, width, height = get_params_from_ui()
+        fixed = fix_frame(frame, **params)
+        load_first_frame(fixed)
+
+
 def main():
     root = ctk.CTk()
     root.title("Video Frame Fixer")
 
-    left_frame = ctk.CTkFrame(root, width=400)
+    left_width, right_width = 300, 800
+
+    left_frame = ctk.CTkFrame(root, width=left_width)
     left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)
 
     # Add widgets to the left frame
@@ -93,6 +122,18 @@ def main():
     builtins.target_path_entry = create_entry_with_label(
         left_frame, "Target Path", DEFAULT_TARGET
     )
+
+    buttons_frame = ctk.CTkFrame(left_frame)
+    buttons_frame.pack(pady=5, fill=ctk.X)
+    ctk.CTkButton(
+        buttons_frame, text="Load Frame", command=load_first_frame, fg_color="grey"
+    ).pack(side=ctk.LEFT, padx=10)
+    ctk.CTkButton(
+        buttons_frame,
+        text="Update",
+        command=update_loaded_frame,
+        fg_color="grey",
+    ).pack(side=ctk.LEFT, padx=10)
 
     builtins.speed_slider = create_slider(left_frame, "Speed %", -100, 100, 20)
     builtins.zoom_slider = create_slider(left_frame, "Zoom %", 0, 100, 60)
@@ -112,10 +153,12 @@ def main():
     ctk.CTkButton(left_frame, text="Start", command=run_script).pack()
 
     # -----------------------------------------------------------
-    right_frame = ctk.CTkFrame(root, width=800)
-    right_frame.pack(side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True)
+    builtins.right_frame = ctk.CTkFrame(root, width=right_width)
+    builtins.right_frame.pack(
+        side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True
+    )
 
-    center_window(root, width=1200, height=600)
+    center_window(root, width=left_width + right_width, height=600)
     root.mainloop()
 
 

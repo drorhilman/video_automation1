@@ -27,6 +27,39 @@
         "documentation": {}
     },
     {
+        "label": "CTkImage",
+        "importPath": "customtkinter",
+        "description": "customtkinter",
+        "isExtraImport": true,
+        "detail": "customtkinter",
+        "documentation": {}
+    },
+    {
+        "label": "Image",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "ImageTk",
+        "importPath": "PIL",
+        "description": "PIL",
+        "isExtraImport": true,
+        "detail": "PIL",
+        "documentation": {}
+    },
+    {
+        "label": "builtins",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "builtins",
+        "description": "builtins",
+        "detail": "builtins",
+        "documentation": {}
+    },
+    {
         "label": "Path",
         "importPath": "pathlib",
         "description": "pathlib",
@@ -41,32 +74,6 @@
         "importPath": "os",
         "description": "os",
         "detail": "os",
-        "documentation": {}
-    },
-    {
-        "label": "tkinter",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "ttk",
-        "importPath": "tkinter",
-        "description": "tkinter",
-        "isExtraImport": true,
-        "detail": "tkinter",
-        "documentation": {}
-    },
-    {
-        "label": "builtins",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "builtins",
-        "description": "builtins",
-        "detail": "builtins",
         "documentation": {}
     },
     {
@@ -119,6 +126,14 @@
     },
     {
         "label": "create_entry_with_label",
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "isExtraImport": true,
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "display_frame",
         "importPath": "ui_functions",
         "description": "ui_functions",
         "isExtraImport": true,
@@ -234,11 +249,29 @@
         "documentation": {}
     },
     {
+        "label": "on_right_frame_resize",
+        "kind": 2,
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "peekOfCode": "def on_right_frame_resize(event, original_frame):\n    # Recalculate and resize the image based on the new dimensions of right_frame\n    w, h = event.width - 20, event.height - 20  # Subtracting padding\n    ratio = original_frame.shape[1] / original_frame.shape[0]\n    new_w = int(h * ratio) if h * ratio <= w else w\n    new_h = int(new_w / ratio)\n    # Resize and update the displayed image\n    ctk_image = CTkImage(Image.fromarray(original_frame), size=(new_w, new_h))\n    builtins.image.configure(image=ctk_image)\ndef display_frame(frame, right_frame):",
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "display_frame",
+        "kind": 2,
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "peekOfCode": "def display_frame(frame, right_frame):\n    if hasattr(builtins, \"image\"):\n        builtins.image.destroy()\n    frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)\n    h, w, _ = frame.shape\n    ratio = w / h\n    new_w = int(right_frame.winfo_width())\n    new_h = int(new_w / ratio)\n    ctk_image = CTkImage(Image.fromarray(frame), size=(new_w, new_h))\n    builtins.image = ctk.CTkLabel(right_frame, image=ctk_image, text=\"\")",
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
         "label": "create_slider",
         "kind": 2,
         "importPath": "ui_functions",
         "description": "ui_functions",
-        "peekOfCode": "def create_slider(root, label, from_, to_, initial_value):\n    frame = ctk.CTkFrame(root)  # Create a frame without padding\n    frame.pack(padx=10, pady=2, fill=ctk.X, expand=True)  # Apply padding during packing\n    ctk.CTkLabel(frame, text=label, font=(\"Arial\", 12), width=80).pack(side=ctk.LEFT, padx=5, anchor='w')\n    var = ctk.StringVar()\n    var.set(initial_value)\n    def update_slider(*args):\n        val = var.get()\n        if val.isdigit() or (val.startswith(\"-\") and val[1:].isdigit()):\n            slider.set(int(val))",
+        "peekOfCode": "def create_slider(root, label, from_, to_, initial_value):\n    frame = ctk.CTkFrame(root)  # Create a frame without padding\n    frame.pack(padx=10, pady=2, fill=ctk.X, expand=True)  # Apply padding during packing\n    ctk.CTkLabel(frame, text=label, font=(\"Arial\", 12), width=80).pack(\n        side=ctk.LEFT, padx=5, anchor=\"w\"\n    )\n    var = ctk.StringVar()\n    var.set(initial_value)\n    def update_slider(*args):\n        val = var.get()",
         "detail": "ui_functions",
         "documentation": {}
     },
@@ -247,7 +280,7 @@
         "kind": 2,
         "importPath": "ui_functions",
         "description": "ui_functions",
-        "peekOfCode": "def create_entry_with_label(\n    root, label_text, initial_value, width=200, padx=10, pady=2\n):\n    container_frame = ctk.CTkFrame(root)\n    container_frame.pack(fill=ctk.X, padx=padx, pady=pady)\n    # Set label with fixed width of 100 pixels in the constructor\n    label = ctk.CTkLabel(container_frame, text=label_text, width=100)\n    label.grid(row=0, column=0, sticky='w', padx=(0, 5))\n    entry = ctk.CTkEntry(container_frame, width=width)\n    entry.insert(0, initial_value)",
+        "peekOfCode": "def create_entry_with_label(\n    root, label_text, initial_value, width=200, padx=10, pady=2\n):\n    container_frame = ctk.CTkFrame(root)\n    container_frame.pack(fill=ctk.X, padx=padx, pady=pady)\n    # Set label with fixed width of 100 pixels in the constructor\n    label = ctk.CTkLabel(container_frame, text=label_text, width=100)\n    label.grid(row=0, column=0, sticky=\"w\", padx=(0, 5))\n    entry = ctk.CTkEntry(container_frame, width=width)\n    entry.insert(0, initial_value)",
         "detail": "ui_functions",
         "documentation": {}
     },
@@ -261,11 +294,38 @@
         "documentation": {}
     },
     {
+        "label": "get_params_from_ui",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def get_params_from_ui():\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,\n        \"height\": height,\n        \"shift_x\": float(builtins.shift_left[0].get()),\n        \"shift_y\": float(builtins.shift_down[0].get()),\n        \"zoom_percentage\": float(builtins.zoom_slider[0].get()),\n        \"sharpen_percentage\": float(builtins.sharpen_slider[0].get()),",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
         "label": "run_script",
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,\n        \"height\": height,\n        \"shift_x\": float(builtins.shift_left[0].get()),",
+        "peekOfCode": "def run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    for file_path in tqdm(file_paths):\n        print(f\"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB\")\n        video_capture = cv2.VideoCapture(str(file_path))\n        new_frame_rate = speed(video_capture, percentage=speed_percentage)\n        total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "load_first_frame",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def load_first_frame(frame=None):\n    ret = True\n    if frame is None:\n        file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n        video_capture = cv2.VideoCapture(str(file_paths[0]))\n        ret, frame = video_capture.read()\n    if ret:\n        display_frame(frame, builtins.right_frame)\n    return ret, frame\ndef update_loaded_frame():",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "update_loaded_frame",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def update_loaded_frame():\n    ret, frame = load_first_frame()\n    if ret:\n        params, width, height = get_params_from_ui()\n        fixed = fix_frame(frame, **params)\n        load_first_frame(fixed)\ndef main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 300, 800",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -274,7 +334,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_frame = ctk.CTkFrame(root, width=400)\n    left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)\n    # Add widgets to the left frame\n    builtins.source_path_entry = create_entry_with_label(\n        left_frame, \"Source Path\", DEFAULT_SOURCE\n    )\n    builtins.target_path_entry = create_entry_with_label(",
+        "peekOfCode": "def main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 300, 800\n    left_frame = ctk.CTkFrame(root, width=left_width)\n    left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)\n    # Add widgets to the left frame\n    builtins.source_path_entry = create_entry_with_label(\n        left_frame, \"Source Path\", DEFAULT_SOURCE\n    )",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -283,7 +343,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef get_params_from_ui():\n    width = int(builtins.width_entry.get())",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -292,7 +352,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()",
+        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef get_params_from_ui():\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -301,7 +361,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())",
+        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef get_params_from_ui():\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {",
         "detail": "video_editing_1",
         "documentation": {}
     }
