@@ -1,9 +1,7 @@
 from pathlib import Path
 import cv2
-import numpy as np
 import os
 import tkinter as tk
-from tkinter import ttk
 import builtins
 from tqdm import tqdm
 from image_editing_functions import speed, fix_frame, compress_with_ffmpg
@@ -19,10 +17,8 @@ DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
 if Path("test/input").exists():
     DEFAULT_SOURCE = "test/input"
     DEFAULT_TARGET = "test/output"
-
+    MAX_FRAMES = 100
 # ==========================   UI     ================================
-
-
 
 
 def run_script():
@@ -58,7 +54,7 @@ def run_script():
         )
         out = cv2.VideoWriter(output_path, fourcc, new_frame_rate, (width, height))
 
-        for i in tqdm(range(total_frames)):
+        for _ in tqdm(list(range(total_frames)[:MAX_FRAMES])):
             ret, frame = video_capture.read()
             if not ret:
                 break
@@ -73,16 +69,12 @@ def run_script():
 
         # --------------------------------
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
-        output_path = str(output_path)
-        print(f"Compressing {output_path}... into {output_path}_compressed.mp4" )
+        print(f"Compressing {output_path}... into {output_path}_compressed.mp4")
         compress_with_ffmpg(output_path, f"{output_path}_compressed.mp4")
 
     cv2.destroyAllWindows()
-    
-
 
     # Now compress the file with ffmpeg
-
 
 
 def main():
