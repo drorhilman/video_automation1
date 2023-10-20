@@ -2,13 +2,12 @@ import cv2
 import numpy as np
 
 
-def shift_frame(frame:np.array, x: int, y: int):
-    if x==0 and y==0:
+def shift_frame(frame: np.ndarray, x: int, y: int):
+    if x == 0 and y == 0:
         return frame
     h, w, _ = frame.shape
-    M = np.float32([[1, 0, x], [0, 1, y]])
-    shifted = cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])
-    return shifted
+    M = np.float32([[1, 0, x], [0, 1, y]]) # type: ignore
+    return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255]) #type: ignore
 
 
 def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:
@@ -95,8 +94,8 @@ def fix_frame(
     height=1080,
     shadow_percentage=0,
     highlight_percentage=0,
-    shift_x=0, 
-    shift_y=0
+    shift_x=0,
+    shift_y=0,
 ):
     frame = shift_frame(frame, shift_x, shift_y)
     frame = zoom(frame, percentage=zoom_percentage)
@@ -107,25 +106,28 @@ def fix_frame(
         frame = add_shadow(frame, shadow_percentage)
     if highlight_percentage != 0:
         frame = add_highlight(frame, highlight_percentage)
-    if width != 0 and height != 0: 
+    if width != 0 and height != 0:
         frame = resize_frame(frame, width=width, height=height)
     return frame
 
 
-def compress_with_ffmpg(input_file: str, output_file: str, target_bitrate="7000k", crf_value="18"):
+def compress_with_ffmpg(
+    input_file: str, output_file: str, target_bitrate="7000k", crf_value="18"
+):
     import subprocess
+
     ffmpeg_command = [
         "ffmpeg",
         "-i",
-        str(input_file),
+        input_file,
         "-c:v",
         "libx264",
         "-b:v",
         target_bitrate,
         "-crf",
         crf_value,
-        "-an",  # Remove audio
-        str(output_file),
+        "-an",
+        output_file,
     ]
     subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
