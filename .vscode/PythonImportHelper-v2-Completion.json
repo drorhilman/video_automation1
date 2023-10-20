@@ -101,6 +101,14 @@
         "documentation": {}
     },
     {
+        "label": "compress_with_ffmpg",
+        "importPath": "image_editing_functions",
+        "description": "image_editing_functions",
+        "isExtraImport": true,
+        "detail": "image_editing_functions",
+        "documentation": {}
+    },
+    {
         "label": "center_window",
         "importPath": "ui_functions",
         "description": "ui_functions",
@@ -125,11 +133,20 @@
         "documentation": {}
     },
     {
+        "label": "shift_frame",
+        "kind": 2,
+        "importPath": "image_editing_functions",
+        "description": "image_editing_functions",
+        "peekOfCode": "def shift_frame(frame:np.array, x: int, y: int):\n    if x==0 and y==0:\n        return frame\n    h, w, _ = frame.shape\n    M = np.float32([[1, 0, x], [0, 1, y]])\n    shifted = cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])\n    return shifted\ndef sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:\n    \"\"\"\n    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.",
+        "detail": "image_editing_functions",
+        "documentation": {}
+    },
+    {
         "label": "sharpen_image",
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:\n    \"\"\"\n    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.\n    \"\"\"\n    percentage = max(0, min(100, percentage)) / 100\n    frame_float = frame.astype(np.float64)\n    blurred = cv2.GaussianBlur(frame_float, (0, 0), sigmaX=3, sigmaY=3)\n    sharpened = cv2.addWeighted(frame_float, 1.0 + percentage, blurred, -percentage, 0)\n    # Convert the sharpened frame back to uint8 format for displaying or saving\n    sharpened = sharpened.astype(np.uint8)",
+        "peekOfCode": "def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:\n    \"\"\"\n    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.\n    \"\"\"\n    if percentage == 0:\n        return frame\n    percentage = max(0, min(100, percentage)) / 100\n    frame_float = frame.astype(np.float64)\n    blurred = cv2.GaussianBlur(frame_float, (0, 0), sigmaX=3, sigmaY=3)\n    sharpened = cv2.addWeighted(frame_float, 1.0 + percentage, blurred, -percentage, 0)",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -165,7 +182,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def speed(video_capture, percentage: float = 30):\n    original_frame_rate = video_capture.get(cv2.CAP_PROP_FPS)\n    return original_frame_rate * (100 + percentage) / 100\ndef adjust_contrast(frame: np.ndarray, percentage: float):\n    alpha = (100 + percentage) / 100\n    return cv2.convertScaleAbs(frame, alpha=alpha, beta=0)\ndef adjust_saturation(frame: np.ndarray, percentage: float):\n    saturation_scale = (100 + percentage) / 100\n    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)\n    h, s, v = cv2.split(hsv)",
+        "peekOfCode": "def speed(video_capture, percentage: float = 30):\n    original_frame_rate = video_capture.get(cv2.CAP_PROP_FPS)\n    return original_frame_rate * (100 + percentage) / 100\ndef adjust_contrast(frame: np.ndarray, percentage: float):\n    alpha = (100 + percentage) / 100\n    return cv2.convertScaleAbs(frame, alpha=alpha, beta=0)\ndef adjust_saturation(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    saturation_scale = (100 + percentage) / 100",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -174,7 +191,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def adjust_contrast(frame: np.ndarray, percentage: float):\n    alpha = (100 + percentage) / 100\n    return cv2.convertScaleAbs(frame, alpha=alpha, beta=0)\ndef adjust_saturation(frame: np.ndarray, percentage: float):\n    saturation_scale = (100 + percentage) / 100\n    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)\n    h, s, v = cv2.split(hsv)\n    s = cv2.convertScaleAbs(s, alpha=saturation_scale, beta=0)\n    hsv = cv2.merge(np.array([h, s, v]))\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)",
+        "peekOfCode": "def adjust_contrast(frame: np.ndarray, percentage: float):\n    alpha = (100 + percentage) / 100\n    return cv2.convertScaleAbs(frame, alpha=alpha, beta=0)\ndef adjust_saturation(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    saturation_scale = (100 + percentage) / 100\n    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)\n    h, s, v = cv2.split(hsv)\n    s = cv2.convertScaleAbs(s, alpha=saturation_scale, beta=0)",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -183,7 +200,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def adjust_saturation(frame: np.ndarray, percentage: float):\n    saturation_scale = (100 + percentage) / 100\n    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)\n    h, s, v = cv2.split(hsv)\n    s = cv2.convertScaleAbs(s, alpha=saturation_scale, beta=0)\n    hsv = cv2.merge(np.array([h, s, v]))\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)\ndef add_shadow(frame: np.ndarray, percentage: float):\n    shadow_intensity = percentage / 100.0\n    shadow_frame = frame * (1 - shadow_intensity)",
+        "peekOfCode": "def adjust_saturation(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    saturation_scale = (100 + percentage) / 100\n    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)\n    h, s, v = cv2.split(hsv)\n    s = cv2.convertScaleAbs(s, alpha=saturation_scale, beta=0)\n    hsv = cv2.merge(np.array([h, s, v]))\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)\ndef add_shadow(frame: np.ndarray, percentage: float):",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -192,7 +209,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def add_shadow(frame: np.ndarray, percentage: float):\n    shadow_intensity = percentage / 100.0\n    shadow_frame = frame * (1 - shadow_intensity)\n    return shadow_frame.astype(np.uint8)\ndef add_highlight(frame: np.ndarray, percentage: float):\n    highlight_intensity = percentage / 100.0\n    highlight_frame = frame + (255 - frame) * highlight_intensity\n    np.clip(highlight_frame, 0, 255, out=highlight_frame)\n    return highlight_frame.astype(np.uint8)\ndef fix_frame(",
+        "peekOfCode": "def add_shadow(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    shadow_intensity = percentage / 100.0\n    shadow_frame = frame * (1 - shadow_intensity)\n    return shadow_frame.astype(np.uint8)\ndef add_highlight(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    highlight_intensity = percentage / 100.0",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -201,7 +218,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def add_highlight(frame: np.ndarray, percentage: float):\n    highlight_intensity = percentage / 100.0\n    highlight_frame = frame + (255 - frame) * highlight_intensity\n    np.clip(highlight_frame, 0, 255, out=highlight_frame)\n    return highlight_frame.astype(np.uint8)\ndef fix_frame(\n    frame,\n    zoom_percentage=60,\n    sharpen_percentage=0.1,\n    contrast_percentage=3,",
+        "peekOfCode": "def add_highlight(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    highlight_intensity = percentage / 100.0\n    highlight_frame = frame + (255 - frame) * highlight_intensity\n    np.clip(highlight_frame, 0, 255, out=highlight_frame)\n    return highlight_frame.astype(np.uint8)\ndef fix_frame(\n    frame,\n    zoom_percentage=60,",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -215,11 +232,20 @@
         "documentation": {}
     },
     {
+        "label": "compress_with_ffmpg",
+        "kind": 2,
+        "importPath": "image_editing_functions",
+        "description": "image_editing_functions",
+        "peekOfCode": "def compress_with_ffmpg(input_file: str, output_file: str, target_bitrate=\"7000k\", crf_value=\"18\"):\n    import subprocess\n    ffmpeg_command = [\n        \"ffmpeg\",\n        \"-i\",\n        str(input_file),\n        \"-c:v\",\n        \"libx264\",\n        \"-b:v\",\n        target_bitrate,",
+        "detail": "image_editing_functions",
+        "documentation": {}
+    },
+    {
         "label": "create_slider",
         "kind": 2,
         "importPath": "ui_functions",
         "description": "ui_functions",
-        "peekOfCode": "def create_slider(root, label, from_, to_, initial_value):\n    frame = tk.Frame(root, padx=10, pady=2)  # Create a frame with padding\n    frame.pack(padx=20, pady=2)\n    ttk.Label(frame, text=label).pack(side=tk.LEFT)\n    var = tk.StringVar()\n    var.set(initial_value)\n    def update_slider(val):\n        slider.set(float(var.get()))\n    def update_var(val):\n        var.set(str(slider.get()))",
+        "peekOfCode": "def create_slider(root, label, from_, to_, initial_value):\n    frame = tk.Frame(root, padx=10, pady=2)  # Create a frame with padding\n    frame.pack(padx=20, pady=2)\n    ttk.Label(frame, text=label).pack(side=tk.LEFT)\n    var = tk.StringVar()\n    var.set(initial_value)\n    def update_slider(val):\n        if val == \"\":\n            val = 0\n        slider.set(float(val))",
         "detail": "ui_functions",
         "documentation": {}
     },
@@ -246,7 +272,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,\n        \"height\": height,\n        \"zoom_percentage\": float(builtins.zoom_slider[0].get()),",
+        "peekOfCode": "def run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,\n        \"height\": height,\n        \"shift_x\": float(builtins.shift_left[0].get()),",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -264,7 +290,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -273,7 +299,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {",
+        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -282,7 +308,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,",
+        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())",
         "detail": "video_editing_1",
         "documentation": {}
     }

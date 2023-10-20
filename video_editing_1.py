@@ -16,6 +16,10 @@ fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
 DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
 
+if Path("test/input").exists():
+    DEFAULT_SOURCE = "test/input"
+    DEFAULT_TARGET = "test/output"
+
 # ==========================   UI     ================================
 
 
