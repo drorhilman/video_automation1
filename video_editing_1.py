@@ -13,8 +13,11 @@ from ui_functions import center_window, create_slider, create_entry_with_label
 
 # custom CONST:
 fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
-DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
+# DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
+# DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
+
+DEFAULT_SOURCE = "/home/dror/personal/ben_video_automation/test/input"
+DEFAULT_TARGET = "/home/dror/personal/ben_video_automation/test/output"
 
 # ==========================   UI     ================================
 
@@ -50,7 +53,7 @@ def run_script():
         )
         out = cv2.VideoWriter(output_path, fourcc, new_frame_rate, (width, height))
 
-        for _ in tqdm(range(total_frames)):
+        for _ in tqdm(list(range(total_frames))[:10]):
             ret, frame = video_capture.read()
             if not ret:
                 break

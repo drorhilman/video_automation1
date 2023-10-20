@@ -264,7 +264,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\n# DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\n# DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nDEFAULT_SOURCE = \"/home/dror/personal/ben_video_automation/test/input\"\nDEFAULT_TARGET = \"/home/dror/personal/ben_video_automation/test/output\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -273,7 +273,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {",
+        "peekOfCode": "DEFAULT_SOURCE = \"/home/dror/personal/ben_video_automation/test/input\"\nDEFAULT_TARGET = \"/home/dror/personal/ben_video_automation/test/output\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -282,7 +282,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,",
+        "peekOfCode": "DEFAULT_TARGET = \"/home/dror/personal/ben_video_automation/test/output\"\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,",
         "detail": "video_editing_1",
         "documentation": {}
     }
