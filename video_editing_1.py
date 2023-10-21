@@ -11,7 +11,6 @@ from ui_functions import (
     center_window,
     create_slider,
     create_entry_with_label,
-    display_frame,
     get_params_from_ui,
     update_loaded_frame,
     load_first_frame,

@@ -141,14 +141,6 @@
         "documentation": {}
     },
     {
-        "label": "display_frame",
-        "importPath": "ui_functions",
-        "description": "ui_functions",
-        "isExtraImport": true,
-        "detail": "ui_functions",
-        "documentation": {}
-    },
-    {
         "label": "get_params_from_ui",
         "importPath": "ui_functions",
         "description": "ui_functions",
