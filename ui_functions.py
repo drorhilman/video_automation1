@@ -1,8 +1,10 @@
 import customtkinter as ctk  # type: ignore
-from PIL import Image, ImageTk
+from PIL import Image  # type: ignore
 from customtkinter import CTkImage
 import cv2
 import builtins
+from pathlib import Path
+from image_editing_functions import fix_frame
 
 
 def on_right_frame_resize(event, original_frame):
@@ -97,6 +99,54 @@ def create_entry_with_label(
     container_frame.grid_columnconfigure(1, weight=1)
 
     return entry
+
+
+def get_params_from_ui():
+    width = int(builtins.width_entry.get())
+    height = int(builtins.height_entry.get())
+    params = {
+        "width": width,
+        "height": height,
+        "shift_x": float(builtins.shift_left[0].get()),
+        "shift_y": float(builtins.shift_down[0].get()),
+        "zoom_percentage": float(builtins.zoom_slider[0].get()),
+        "sharpen_percentage": float(builtins.sharpen_slider[0].get()),
+        "contrast_percentage": float(builtins.contrast_slider[0].get()),
+        "saturation_percentage": float(builtins.saturation_slider[0].get()),
+        "shadow_percentage": float(builtins.shadow_slider[0].get()),
+        "highlight_percentage": float(builtins.highlight_slider[0].get()),
+    }
+    return params, width, height
+
+
+def load_first_frame(frame=None):
+    ret = True
+    if frame is None:
+        file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
+        video_capture = cv2.VideoCapture(str(file_paths[0]))
+        ret, frame = video_capture.read()
+    if ret:
+        display_frame(frame, builtins.right_frame)
+    return ret, frame
+
+
+def update_loaded_frame():
+    ret, frame = load_first_frame()
+    if ret:
+        params, width, height = get_params_from_ui()
+        fixed = fix_frame(frame, **params)
+        load_first_frame(fixed)
+
+
+def update_frame_loading_on_params_change():
+    params, width, height = get_params_from_ui()
+    if not hasattr(builtins, "original_params"):
+        builtins.original_params = str(params)
+        return
+
+    if str(params) != builtins.original_params:
+        update_loaded_frame()
+        builtins.original_params = str(params)
 
 
 def center_window(root, width=400, height=450):

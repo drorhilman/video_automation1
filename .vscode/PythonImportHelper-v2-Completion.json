@@ -43,14 +43,6 @@
         "documentation": {}
     },
     {
-        "label": "ImageTk",
-        "importPath": "PIL",
-        "description": "PIL",
-        "isExtraImport": true,
-        "detail": "PIL",
-        "documentation": {}
-    },
-    {
         "label": "builtins",
         "kind": 6,
         "isExtraImport": true,
@@ -68,20 +60,19 @@
         "documentation": {}
     },
     {
-        "label": "os",
-        "kind": 6,
+        "label": "Path",
+        "importPath": "pathlib",
+        "description": "pathlib",
         "isExtraImport": true,
-        "importPath": "os",
-        "description": "os",
-        "detail": "os",
+        "detail": "pathlib",
         "documentation": {}
     },
     {
-        "label": "tqdm",
-        "importPath": "tqdm",
-        "description": "tqdm",
+        "label": "fix_frame",
+        "importPath": "image_editing_functions",
+        "description": "image_editing_functions",
         "isExtraImport": true,
-        "detail": "tqdm",
+        "detail": "image_editing_functions",
         "documentation": {}
     },
     {
@@ -106,6 +97,23 @@
         "description": "image_editing_functions",
         "isExtraImport": true,
         "detail": "image_editing_functions",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "tqdm",
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "isExtraImport": true,
+        "detail": "tqdm",
         "documentation": {}
     },
     {
@@ -134,6 +142,38 @@
     },
     {
         "label": "display_frame",
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "isExtraImport": true,
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "get_params_from_ui",
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "isExtraImport": true,
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "update_loaded_frame",
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "isExtraImport": true,
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "load_first_frame",
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "isExtraImport": true,
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "update_frame_loading_on_params_change",
         "importPath": "ui_functions",
         "description": "ui_functions",
         "isExtraImport": true,
@@ -285,21 +325,48 @@
         "documentation": {}
     },
     {
+        "label": "get_params_from_ui",
+        "kind": 2,
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "peekOfCode": "def get_params_from_ui():\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,\n        \"height\": height,\n        \"shift_x\": float(builtins.shift_left[0].get()),\n        \"shift_y\": float(builtins.shift_down[0].get()),\n        \"zoom_percentage\": float(builtins.zoom_slider[0].get()),\n        \"sharpen_percentage\": float(builtins.sharpen_slider[0].get()),",
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "load_first_frame",
+        "kind": 2,
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "peekOfCode": "def load_first_frame(frame=None):\n    ret = True\n    if frame is None:\n        file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n        video_capture = cv2.VideoCapture(str(file_paths[0]))\n        ret, frame = video_capture.read()\n    if ret:\n        display_frame(frame, builtins.right_frame)\n    return ret, frame\ndef update_loaded_frame():",
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "update_loaded_frame",
+        "kind": 2,
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "peekOfCode": "def update_loaded_frame():\n    ret, frame = load_first_frame()\n    if ret:\n        params, width, height = get_params_from_ui()\n        fixed = fix_frame(frame, **params)\n        load_first_frame(fixed)\ndef update_frame_loading_on_params_change():\n    params, width, height = get_params_from_ui()\n    if not hasattr(builtins, \"original_params\"):\n        builtins.original_params = str(params)",
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
+        "label": "update_frame_loading_on_params_change",
+        "kind": 2,
+        "importPath": "ui_functions",
+        "description": "ui_functions",
+        "peekOfCode": "def update_frame_loading_on_params_change():\n    params, width, height = get_params_from_ui()\n    if not hasattr(builtins, \"original_params\"):\n        builtins.original_params = str(params)\n        return\n    if str(params) != builtins.original_params:\n        update_loaded_frame()\n        builtins.original_params = str(params)\ndef center_window(root, width=400, height=450):\n    screen_width = root.winfo_screenwidth()",
+        "detail": "ui_functions",
+        "documentation": {}
+    },
+    {
         "label": "center_window",
         "kind": 2,
         "importPath": "ui_functions",
         "description": "ui_functions",
         "peekOfCode": "def center_window(root, width=400, height=450):\n    screen_width = root.winfo_screenwidth()\n    screen_height = root.winfo_screenheight()\n    x = int((screen_width / 2) - (width / 2))\n    y = int((screen_height / 2) - (height / 2))\n    root.geometry(f\"{width}x{height}+{x}+{y}\")",
         "detail": "ui_functions",
-        "documentation": {}
-    },
-    {
-        "label": "get_params_from_ui",
-        "kind": 2,
-        "importPath": "video_editing_1",
-        "description": "video_editing_1",
-        "peekOfCode": "def get_params_from_ui():\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {\n        \"width\": width,\n        \"height\": height,\n        \"shift_x\": float(builtins.shift_left[0].get()),\n        \"shift_y\": float(builtins.shift_down[0].get()),\n        \"zoom_percentage\": float(builtins.zoom_slider[0].get()),\n        \"sharpen_percentage\": float(builtins.sharpen_slider[0].get()),",
-        "detail": "video_editing_1",
         "documentation": {}
     },
     {
@@ -312,29 +379,11 @@
         "documentation": {}
     },
     {
-        "label": "load_first_frame",
-        "kind": 2,
-        "importPath": "video_editing_1",
-        "description": "video_editing_1",
-        "peekOfCode": "def load_first_frame(frame=None):\n    ret = True\n    if frame is None:\n        file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n        video_capture = cv2.VideoCapture(str(file_paths[0]))\n        ret, frame = video_capture.read()\n    if ret:\n        display_frame(frame, builtins.right_frame)\n    return ret, frame\ndef update_loaded_frame():",
-        "detail": "video_editing_1",
-        "documentation": {}
-    },
-    {
-        "label": "update_loaded_frame",
-        "kind": 2,
-        "importPath": "video_editing_1",
-        "description": "video_editing_1",
-        "peekOfCode": "def update_loaded_frame():\n    ret, frame = load_first_frame()\n    if ret:\n        params, width, height = get_params_from_ui()\n        fixed = fix_frame(frame, **params)\n        load_first_frame(fixed)\ndef main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 300, 800",
-        "detail": "video_editing_1",
-        "documentation": {}
-    },
-    {
         "label": "main",
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 300, 800\n    left_frame = ctk.CTkFrame(root, width=left_width)\n    left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)\n    # Add widgets to the left frame\n    builtins.source_path_entry = create_entry_with_label(\n        left_frame, \"Source Path\", DEFAULT_SOURCE\n    )",
+        "peekOfCode": "def main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 300, 800\n    left_frame = ctk.CTkFrame(root, width=left_width)\n    left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)\n    builtins.update_loaded_frame = update_loaded_frame\n    # Add widgets to the left frame\n    builtins.source_path_entry = create_entry_with_label(\n        left_frame, \"Source Path\", DEFAULT_SOURCE",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -343,7 +392,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef get_params_from_ui():\n    width = int(builtins.width_entry.get())",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -352,7 +401,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef get_params_from_ui():\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())",
+        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -361,7 +410,16 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef get_params_from_ui():\n    width = int(builtins.width_entry.get())\n    height = int(builtins.height_entry.get())\n    params = {",
+        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "MAX_FRAMES",
+        "kind": 5,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "MAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())",
         "detail": "video_editing_1",
         "documentation": {}
     }

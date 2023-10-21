@@ -12,12 +12,17 @@ from ui_functions import (
     create_slider,
     create_entry_with_label,
     display_frame,
+    get_params_from_ui,
+    update_loaded_frame,
+    load_first_frame,
+    update_frame_loading_on_params_change,
 )
 
 # custom CONST:
 fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
 DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
+MAX_FRAMES = 100000000
 
 if Path("test/input").exists():
     DEFAULT_SOURCE = "test/input"
@@ -26,26 +31,7 @@ if Path("test/input").exists():
 # ==========================   UI     ================================
 
 
-def get_params_from_ui():
-    width = int(builtins.width_entry.get())
-    height = int(builtins.height_entry.get())
-    params = {
-        "width": width,
-        "height": height,
-        "shift_x": float(builtins.shift_left[0].get()),
-        "shift_y": float(builtins.shift_down[0].get()),
-        "zoom_percentage": float(builtins.zoom_slider[0].get()),
-        "sharpen_percentage": float(builtins.sharpen_slider[0].get()),
-        "contrast_percentage": float(builtins.contrast_slider[0].get()),
-        "saturation_percentage": float(builtins.saturation_slider[0].get()),
-        "shadow_percentage": float(builtins.shadow_slider[0].get()),
-        "highlight_percentage": float(builtins.highlight_slider[0].get()),
-    }
-    return params, width, height
-
-
 def run_script():
-    
     file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
     target_path = builtins.target_path_entry.get()
     speed_percentage = float(builtins.speed_slider[0].get())
@@ -89,25 +75,6 @@ def run_script():
     # Now compress the file with ffmpeg
 
 
-def load_first_frame(frame=None):
-    ret = True
-    if frame is None:
-        file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
-        video_capture = cv2.VideoCapture(str(file_paths[0]))
-        ret, frame = video_capture.read()
-    if ret:
-        display_frame(frame, builtins.right_frame)
-    return ret, frame
-
-
-def update_loaded_frame():
-    ret, frame = load_first_frame()
-    if ret:
-        params, width, height = get_params_from_ui()
-        fixed = fix_frame(frame, **params)
-        load_first_frame(fixed)
-
-
 def main():
     root = ctk.CTk()
     root.title("Video Frame Fixer")
@@ -116,7 +83,7 @@ def main():
 
     left_frame = ctk.CTkFrame(root, width=left_width)
     left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)
-
+    builtins.update_loaded_frame = update_loaded_frame
     # Add widgets to the left frame
     builtins.source_path_entry = create_entry_with_label(
         left_frame, "Source Path", DEFAULT_SOURCE
@@ -128,11 +95,11 @@ def main():
     buttons_frame = ctk.CTkFrame(left_frame)
     buttons_frame.pack(pady=5, fill=ctk.X)
     ctk.CTkButton(
-        buttons_frame, text="Load Frame", command=load_first_frame, fg_color="grey"
+        buttons_frame, text="Original Frame", command=load_first_frame, fg_color="grey"
     ).pack(side=ctk.LEFT, padx=10)
     ctk.CTkButton(
         buttons_frame,
-        text="Update",
+        text="Apply Fix",
         command=update_loaded_frame,
         fg_color="grey",
     ).pack(side=ctk.LEFT, padx=10)
@@ -168,6 +135,13 @@ def main():
     )
 
     center_window(root, width=left_width + right_width, height=600)
+
+    def repeat_update(time=200):
+        update_frame_loading_on_params_change()
+        root.after(time, repeat_update)
+
+    repeat_update()
+
     root.mainloop()
 
 
