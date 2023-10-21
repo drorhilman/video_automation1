@@ -187,7 +187,7 @@ def main():
 
     repeat_update()
     root.protocol("WM_DELETE_WINDOW", on_closing)
-    root.after(1000, load_first_frame)
+    root.after(100, load_first_frame)
     root.mainloop()
 
 
