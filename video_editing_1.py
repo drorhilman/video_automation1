@@ -57,7 +57,10 @@ def run_script():
         )
         out = cv2.VideoWriter(output_path, fourcc, new_frame_rate, (width, height))
 
-        for _ in tqdm(list(range(total_frames)[:MAX_FRAMES])):
+        for frame_idx in tqdm(list(range(total_frames)[:MAX_FRAMES])):
+            builtins.message.configure(
+                text=f"Fixing frame: {frame_idx+1} of {Path(file_path).name} "
+            )
             if stop_script:
                 break
             ret, frame = video_capture.read()
@@ -71,12 +74,15 @@ def run_script():
         # Release resources
         video_capture.release()
         out.release()
-
+        if stop_script:
+            return
         # --------------------------------
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
         print(f"Compressing {output_path}... into {output_path}_compressed.mp4")
+        builtins.message.configure(text=f"Compressing Image: {Path(file_path).name} ")
         compress_with_ffmpg(output_path, f"{output_path}_compressed.mp4")
-        stop_script = False
+    stop_script = False
+    builtins.message.configure(text="Done!")
 
     cv2.destroyAllWindows()
 
@@ -86,14 +92,18 @@ def run_script():
 def stop_running():
     global stop_script
     stop_script = True
-    builtins.stop_button.pack_forget()  # Hide the stop button
+    builtins.stop_button.pack_forget()
+    builtins.start_button.pack(side=ctk.LEFT, padx=10)
+    builtins.message.configure(text="Stopped!")
 
 
 def start_script():
     global stop_script
     stop_script = False
+
     builtins.message.configure(text="Running...")
-    builtins.stop_button.pack()  # Show the stop button
+    builtins.start_button.pack_forget()
+    builtins.stop_button.pack(side=ctk.LEFT, padx=10)
     threading.Thread(target=run_script).start()
 
 
@@ -144,9 +154,12 @@ def main():
     # start button
     start_buttons_frame = ctk.CTkFrame(left_frame)
     start_buttons_frame.pack(pady=5, fill=ctk.X)
-    ctk.CTkButton(start_buttons_frame, text="Start", command=start_script).pack()
+    builtins.start_button = ctk.CTkButton(
+        start_buttons_frame, text="Start", command=start_script
+    )
+    builtins.start_button.pack(side=ctk.LEFT, padx=10)
     builtins.stop_button = ctk.CTkButton(
-        start_buttons_frame, text="Stop", command=stop_running
+        start_buttons_frame, text="Stop", command=stop_running, fg_color="red"
     )
 
     # comments label:
@@ -165,10 +178,16 @@ def main():
 
     def repeat_update(time=200):
         update_frame_loading_on_params_change()
-        root.after(time, repeat_update)
+
+    def on_closing():
+        global stop_script
+        stop_script = True
+        root.destroy()
+        exit()
 
     repeat_update()
-
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+    root.after(1000, load_first_frame)
     root.mainloop()
 
 

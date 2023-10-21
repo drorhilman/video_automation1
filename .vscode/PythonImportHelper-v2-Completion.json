@@ -384,7 +384,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def stop_running():\n    global stop_script\n    stop_script = True\n    builtins.stop_button.pack_forget()  # Hide the stop button\ndef start_script():\n    global stop_script\n    stop_script = False\n    builtins.message.configure(text=\"Running...\")\n    builtins.stop_button.pack()  # Show the stop button\n    threading.Thread(target=run_script).start()",
+        "peekOfCode": "def stop_running():\n    global stop_script\n    stop_script = True\n    builtins.stop_button.pack_forget()\n    builtins.start_button.pack(side=ctk.LEFT, padx=10)\n    builtins.message.configure(text=\"Stopped!\")\ndef start_script():\n    global stop_script\n    stop_script = False\n    builtins.message.configure(text=\"Running...\")",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -393,7 +393,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def start_script():\n    global stop_script\n    stop_script = False\n    builtins.message.configure(text=\"Running...\")\n    builtins.stop_button.pack()  # Show the stop button\n    threading.Thread(target=run_script).start()\ndef main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 300, 800",
+        "peekOfCode": "def start_script():\n    global stop_script\n    stop_script = False\n    builtins.message.configure(text=\"Running...\")\n    builtins.start_button.pack_forget()\n    builtins.stop_button.pack(side=ctk.LEFT, padx=10)\n    threading.Thread(target=run_script).start()\ndef main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")",
         "detail": "video_editing_1",
         "documentation": {}
     },
