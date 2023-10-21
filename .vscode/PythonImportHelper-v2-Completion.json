@@ -307,7 +307,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    for file_path in tqdm(file_paths):\n        print(f\"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB\")\n        video_capture = cv2.VideoCapture(str(file_path))\n        new_frame_rate = speed(video_capture, percentage=speed_percentage)\n        total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))",
+        "peekOfCode": "def run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths):\n        print(f\"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB\")\n        video_capture = cv2.VideoCapture(str(file_path))\n        new_frame_rate = speed(video_capture, percentage=speed_percentage)",
         "detail": "video_editing_1",
         "documentation": {}
     },

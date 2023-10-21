@@ -45,10 +45,12 @@ def get_params_from_ui():
 
 
 def run_script():
+    
     file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
     target_path = builtins.target_path_entry.get()
     speed_percentage = float(builtins.speed_slider[0].get())
     params, width, height = get_params_from_ui()
+    builtins.message.configure(text="Running...")
 
     for file_path in tqdm(file_paths):
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
@@ -150,7 +152,14 @@ def main():
     builtins.width_entry = create_entry_with_label(left_frame, "width:", "3840")
     builtins.height_entry = create_entry_with_label(left_frame, "height:", "2160")
 
+    # start button
     ctk.CTkButton(left_frame, text="Start", command=run_script).pack()
+
+    # comments label:
+    messages_frame = ctk.CTkFrame(left_frame)
+    messages_frame.pack(side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True)
+    builtins.message = ctk.CTkLabel(messages_frame, text="Not started", width=100)
+    builtins.message.pack()
 
     # -----------------------------------------------------------
     builtins.right_frame = ctk.CTkFrame(root, width=right_width)
