@@ -392,7 +392,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\") # type: ignore\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():",
         "detail": "video_editing_1",
         "documentation": {}
     },

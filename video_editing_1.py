@@ -19,7 +19,7 @@ from ui_functions import (
 )
 
 # custom CONST:
-fourcc = cv2.VideoWriter_fourcc(*"mp4v")
+fourcc = cv2.VideoWriter_fourcc(*"mp4v") # type: ignore
 DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
 DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
 MAX_FRAMES = 100000000
