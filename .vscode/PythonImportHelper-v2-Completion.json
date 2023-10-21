@@ -117,6 +117,15 @@
         "documentation": {}
     },
     {
+        "label": "threading",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "threading",
+        "description": "threading",
+        "detail": "threading",
+        "documentation": {}
+    },
+    {
         "label": "center_window",
         "importPath": "ui_functions",
         "description": "ui_functions",
@@ -366,7 +375,25 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths):\n        print(f\"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB\")\n        video_capture = cv2.VideoCapture(str(file_path))\n        new_frame_rate = speed(video_capture, percentage=speed_percentage)",
+        "peekOfCode": "def run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths):\n        if stop_script:\n            break",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "stop_running",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def stop_running():\n    global stop_script\n    stop_script = True\n    builtins.stop_button.pack_forget()  # Hide the stop button\ndef start_script():\n    global stop_script\n    stop_script = False\n    builtins.message.configure(text=\"Running...\")\n    builtins.stop_button.pack()  # Show the stop button\n    threading.Thread(target=run_script).start()",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "start_script",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def start_script():\n    global stop_script\n    stop_script = False\n    builtins.message.configure(text=\"Running...\")\n    builtins.stop_button.pack()  # Show the stop button\n    threading.Thread(target=run_script).start()\ndef main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 300, 800",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -384,7 +411,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\") # type: ignore\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")  # type: ignore\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -393,7 +420,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))",
+        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop\nstop_script = False",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -402,7 +429,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()",
+        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop\nstop_script = False\ndef run_script():",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -411,7 +438,16 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "MAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\ndef run_script():\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())",
+        "peekOfCode": "MAX_FRAMES = 100000000\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop\nstop_script = False\ndef run_script():\n    global stop_script",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "stop_script",
+        "kind": 5,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "stop_script = False\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths):\n        if stop_script:",
         "detail": "video_editing_1",
         "documentation": {}
     }

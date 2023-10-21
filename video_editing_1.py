@@ -5,6 +5,7 @@ import builtins
 from tqdm import tqdm
 from image_editing_functions import speed, fix_frame, compress_with_ffmpg
 import customtkinter as ctk  # type: ignore
+import threading
 
 
 from ui_functions import (
@@ -18,7 +19,7 @@ from ui_functions import (
 )
 
 # custom CONST:
-fourcc = cv2.VideoWriter_fourcc(*"mp4v") # type: ignore
+fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # type: ignore
 DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
 DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
 MAX_FRAMES = 100000000
@@ -28,9 +29,12 @@ if Path("test/input").exists():
     DEFAULT_TARGET = "test/output"
     MAX_FRAMES = 100
 # ==========================   UI     ================================
+# Global flag to check if the script should stop
+stop_script = False
 
 
 def run_script():
+    global stop_script
     file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
     target_path = builtins.target_path_entry.get()
     speed_percentage = float(builtins.speed_slider[0].get())
@@ -38,6 +42,8 @@ def run_script():
     builtins.message.configure(text="Running...")
 
     for file_path in tqdm(file_paths):
+        if stop_script:
+            break
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
 
         video_capture = cv2.VideoCapture(str(file_path))
@@ -52,6 +58,8 @@ def run_script():
         out = cv2.VideoWriter(output_path, fourcc, new_frame_rate, (width, height))
 
         for _ in tqdm(list(range(total_frames)[:MAX_FRAMES])):
+            if stop_script:
+                break
             ret, frame = video_capture.read()
             if not ret:
                 break
@@ -68,10 +76,25 @@ def run_script():
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
         print(f"Compressing {output_path}... into {output_path}_compressed.mp4")
         compress_with_ffmpg(output_path, f"{output_path}_compressed.mp4")
+        stop_script = False
 
     cv2.destroyAllWindows()
 
     # Now compress the file with ffmpeg
+
+
+def stop_running():
+    global stop_script
+    stop_script = True
+    builtins.stop_button.pack_forget()  # Hide the stop button
+
+
+def start_script():
+    global stop_script
+    stop_script = False
+    builtins.message.configure(text="Running...")
+    builtins.stop_button.pack()  # Show the stop button
+    threading.Thread(target=run_script).start()
 
 
 def main():
@@ -119,7 +142,12 @@ def main():
     builtins.height_entry = create_entry_with_label(left_frame, "height:", "2160")
 
     # start button
-    ctk.CTkButton(left_frame, text="Start", command=run_script).pack()
+    start_buttons_frame = ctk.CTkFrame(left_frame)
+    start_buttons_frame.pack(pady=5, fill=ctk.X)
+    ctk.CTkButton(start_buttons_frame, text="Start", command=start_script).pack()
+    builtins.stop_button = ctk.CTkButton(
+        start_buttons_frame, text="Stop", command=stop_running
+    )
 
     # comments label:
     messages_frame = ctk.CTkFrame(left_frame)
