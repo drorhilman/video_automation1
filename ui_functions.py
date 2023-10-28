@@ -115,6 +115,7 @@ def get_params_from_ui():
         "saturation_percentage": float(builtins.saturation_slider[0].get()),
         "shadow_percentage": float(builtins.shadow_slider[0].get()),
         "highlight_percentage": float(builtins.highlight_slider[0].get()),
+        "max_frames" : int(builtins.max_frames.get())
     }
     return params, width, height
 

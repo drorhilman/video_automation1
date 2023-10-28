@@ -96,6 +96,7 @@ def fix_frame(
     highlight_percentage=0,
     shift_x=0,
     shift_y=0,
+    max_frames=10000000
 ):
     frame = shift_frame(frame, shift_x, shift_y)
     frame = zoom(frame, percentage=zoom_percentage)
@@ -112,7 +113,7 @@ def fix_frame(
 
 
 def compress_with_ffmpg(
-    input_file: str, output_file: str, target_bitrate="7000k", crf_value="18"
+    input_file: str, output_file: str, target_bitrate="5000k", crf_value="18"
 ):
     import subprocess
 

@@ -39,6 +39,7 @@ def run_script():
     target_path = builtins.target_path_entry.get()
     speed_percentage = float(builtins.speed_slider[0].get())
     params, width, height = get_params_from_ui()
+    MAX_FRAMES = params["max_frames"]
     builtins.message.configure(text="Running...")
 
     for file_path in tqdm(file_paths):
@@ -148,6 +149,7 @@ def main():
     builtins.shadow_slider = create_slider(left_frame, "Shadow %", -100, 100, 0)
     builtins.highlight_slider = create_slider(left_frame, "Highlight %", -100, 100, 0)
 
+    builtins.max_frames = create_entry_with_label(left_frame, "max farmes:", MAX_FRAMES)
     builtins.width_entry = create_entry_with_label(left_frame, "width:", "3840")
     builtins.height_entry = create_entry_with_label(left_frame, "height:", "2160")
 
