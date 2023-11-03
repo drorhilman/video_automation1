@@ -1,5 +1,39 @@
 [
     {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "tqdm",
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "isExtraImport": true,
+        "detail": "tqdm",
+        "documentation": {}
+    },
+    {
+        "label": "tqdm",
+        "importPath": "tqdm",
+        "description": "tqdm",
+        "isExtraImport": true,
+        "detail": "tqdm",
+        "documentation": {}
+    },
+    {
+        "label": "re",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "re",
+        "description": "re",
+        "detail": "re",
+        "documentation": {}
+    },
+    {
         "label": "cv2",
         "kind": 6,
         "isExtraImport": true,
@@ -15,6 +49,15 @@
         "importPath": "numpy",
         "description": "numpy",
         "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "builtins",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "builtins",
+        "description": "builtins",
+        "detail": "builtins",
         "documentation": {}
     },
     {
@@ -43,15 +86,6 @@
         "documentation": {}
     },
     {
-        "label": "builtins",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "builtins",
-        "description": "builtins",
-        "detail": "builtins",
-        "documentation": {}
-    },
-    {
         "label": "Path",
         "importPath": "pathlib",
         "description": "pathlib",
@@ -76,23 +110,7 @@
         "documentation": {}
     },
     {
-        "label": "speed",
-        "importPath": "image_editing_functions",
-        "description": "image_editing_functions",
-        "isExtraImport": true,
-        "detail": "image_editing_functions",
-        "documentation": {}
-    },
-    {
         "label": "fix_frame",
-        "importPath": "image_editing_functions",
-        "description": "image_editing_functions",
-        "isExtraImport": true,
-        "detail": "image_editing_functions",
-        "documentation": {}
-    },
-    {
-        "label": "compress_with_ffmpg",
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
         "isExtraImport": true,
@@ -109,11 +127,11 @@
         "documentation": {}
     },
     {
-        "label": "tqdm",
-        "importPath": "tqdm",
-        "description": "tqdm",
+        "label": "compress_with_ffmpeg",
+        "importPath": "compression",
+        "description": "compression",
         "isExtraImport": true,
-        "detail": "tqdm",
+        "detail": "compression",
         "documentation": {}
     },
     {
@@ -182,11 +200,38 @@
         "documentation": {}
     },
     {
+        "label": "duration_command",
+        "kind": 2,
+        "importPath": "compression",
+        "description": "compression",
+        "peekOfCode": "def duration_command(input_file: str):\n    return [\n        \"ffprobe\",\n        \"-v\",\n        \"error\",\n        \"-show_entries\",\n        \"format=duration\",\n        \"-of\",\n        \"default=noprint_wrappers=1:nokey=1\",\n        input_file,",
+        "detail": "compression",
+        "documentation": {}
+    },
+    {
+        "label": "compress_with_ffmpeg",
+        "kind": 2,
+        "importPath": "compression",
+        "description": "compression",
+        "peekOfCode": "def compress_with_ffmpeg(input_file: str, output_file: str, target_bitrate=\"4000k\", crf_value=\"32\"):\n    duration_output = subprocess.run(duration_command(input_file), stdout=subprocess.PIPE, stderr=subprocess.PIPE)\n    total_duration = float(duration_output.stdout)\n    # Now start the ffmpeg process\n    ffmpeg_command = [\n        \"ffmpeg\",\n        \"-y\",  # Overwrite without asking if the output file exists\n        \"-i\",\n        input_file,\n        \"-c:v\",",
+        "detail": "compression",
+        "documentation": {}
+    },
+    {
+        "label": "progress_pattern",
+        "kind": 5,
+        "importPath": "compression",
+        "description": "compression",
+        "peekOfCode": "progress_pattern = re.compile(r\"time=(\\d+:\\d+:\\d+\\.\\d+)\")\n# First, get the total duration using ffprobe\ndef duration_command(input_file: str):\n    return [\n        \"ffprobe\",\n        \"-v\",\n        \"error\",\n        \"-show_entries\",\n        \"format=duration\",\n        \"-of\",",
+        "detail": "compression",
+        "documentation": {}
+    },
+    {
         "label": "shift_frame",
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def shift_frame(frame: np.ndarray, x: int, y: int):\n    if x == 0 and y == 0:\n        return frame\n    h, w, _ = frame.shape\n    M = np.float32([[1, 0, x], [0, 1, y]]) # type: ignore\n    return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255]) #type: ignore\ndef sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:\n    \"\"\"\n    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.\n    \"\"\"",
+        "peekOfCode": "def shift_frame(frame: np.ndarray, x: int, y: int):\n    if x == 0 and y == 0:\n        return frame\n    h, w, _ = frame.shape\n    M = np.float32([[1, 0, x], [0, 1, y]])  # type: ignore\n    return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])  # type: ignore\ndef sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:\n    \"\"\"\n    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.\n    \"\"\"",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -249,7 +294,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def adjust_saturation(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    saturation_scale = (100 + percentage) / 100\n    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)\n    h, s, v = cv2.split(hsv)\n    s = cv2.convertScaleAbs(s, alpha=saturation_scale, beta=0)\n    hsv = cv2.merge(np.array([h, s, v]))\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)\ndef add_shadow(frame: np.ndarray, percentage: float):",
+        "peekOfCode": "def adjust_saturation(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    saturation_scale = (100 + percentage) / 100\n    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)\n    h, s, v = cv2.split(hsv)\n    s = cv2.convertScaleAbs(s, alpha=saturation_scale, beta=0)\n    hsv = cv2.merge(np.array([h, s, v]))  # type: ignore\n    return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)\ndef add_shadow(frame: np.ndarray, percentage: float):",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -277,15 +322,6 @@
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
         "peekOfCode": "def fix_frame(\n    frame,\n    zoom_percentage=60,\n    sharpen_percentage=0.1,\n    contrast_percentage=3,\n    saturation_percentage=-20,\n    width=1920,\n    height=1080,\n    shadow_percentage=0,\n    highlight_percentage=0,",
-        "detail": "image_editing_functions",
-        "documentation": {}
-    },
-    {
-        "label": "compress_with_ffmpg",
-        "kind": 2,
-        "importPath": "image_editing_functions",
-        "description": "image_editing_functions",
-        "peekOfCode": "def compress_with_ffmpg(\n    input_file: str, output_file: str, target_bitrate=\"5000k\", crf_value=\"18\"\n):\n    import subprocess\n    ffmpeg_command = [\n        \"ffmpeg\",\n        \"-i\",\n        input_file,\n        \"-c:v\",\n        \"libx264\",",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -429,7 +465,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")  # type: ignore\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")  # type: ignore\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -438,7 +474,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100",
+        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -447,7 +483,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================",
+        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -456,7 +492,16 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "MAX_FRAMES = 100000000\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop",
+        "peekOfCode": "MAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "BITRATE",
+        "kind": 5,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "BITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop",
         "detail": "video_editing_1",
         "documentation": {}
     },

@@ -3,7 +3,8 @@ import cv2
 import os
 import builtins
 from tqdm import tqdm
-from image_editing_functions import speed, fix_frame, compress_with_ffmpg
+from image_editing_functions import fix_frame
+from compression import compress_with_ffmpeg
 import customtkinter as ctk  # type: ignore
 import threading
 
@@ -23,6 +24,7 @@ fourcc = cv2.VideoWriter_fourcc(*"mp4v")  # type: ignore
 DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
 DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
 MAX_FRAMES = 100000000
+BITRATE = "4000k"
 
 
 def skip_frame(frame_idx: int, speed_percentage: float) -> bool:
@@ -78,7 +80,7 @@ def run_script():
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
         print(f"Compressing {output_path}... into {output_path}_compressed.mp4")
         builtins.message.configure(text=f"Compressing Image: {Path(file_path).name} ")
-        compress_with_ffmpg(output_path, f"{output_path}_compressed.mp4")
+        compress_with_ffmpeg(output_path, f"{output_path}_compressed.mp4", target_bitrate=builtins.bitrate.get())
     stop_script = False
     builtins.message.configure(text="Done!")
 
@@ -145,6 +147,7 @@ def main():
     builtins.highlight_slider = create_slider(left_frame, "Highlight %", -100, 100, 0)
 
     builtins.max_frames = create_entry_with_label(left_frame, "max frames:", MAX_FRAMES)
+    builtins.bitrate = create_entry_with_label(left_frame, "bitrate:", BITRATE)
     builtins.width_entry = create_entry_with_label(left_frame, "width:", "3840")
     builtins.height_entry = create_entry_with_label(left_frame, "height:", "2160")
 

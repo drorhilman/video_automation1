@@ -1,13 +1,14 @@
 import cv2
 import numpy as np
+import builtins
 
 
 def shift_frame(frame: np.ndarray, x: int, y: int):
     if x == 0 and y == 0:
         return frame
     h, w, _ = frame.shape
-    M = np.float32([[1, 0, x], [0, 1, y]]) # type: ignore
-    return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255]) #type: ignore
+    M = np.float32([[1, 0, x], [0, 1, y]])  # type: ignore
+    return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])  # type: ignore
 
 
 def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:
@@ -63,7 +64,7 @@ def adjust_saturation(frame: np.ndarray, percentage: float):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
     s = cv2.convertScaleAbs(s, alpha=saturation_scale, beta=0)
-    hsv = cv2.merge(np.array([h, s, v]))
+    hsv = cv2.merge(np.array([h, s, v]))  # type: ignore
     return cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 
 
@@ -96,7 +97,7 @@ def fix_frame(
     highlight_percentage=0,
     shift_x=0,
     shift_y=0,
-    max_frames=10000000
+    max_frames=10000000,
 ):
     frame = shift_frame(frame, shift_x, shift_y)
     frame = zoom(frame, percentage=zoom_percentage)
@@ -110,27 +111,6 @@ def fix_frame(
     if width != 0 and height != 0:
         frame = resize_frame(frame, width=width, height=height)
     return frame
-
-
-def compress_with_ffmpg(
-    input_file: str, output_file: str, target_bitrate="5000k", crf_value="18"
-):
-    import subprocess
-
-    ffmpeg_command = [
-        "ffmpeg",
-        "-i",
-        input_file,
-        "-c:v",
-        "libx264",
-        "-b:v",
-        target_bitrate,
-        "-crf",
-        crf_value,
-        "-an",
-        output_file,
-    ]
-    subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 #  ============= DOCS .... ==============================
