@@ -47,7 +47,7 @@ def compress_with_ffmpeg(input_file: str, output_file: str, target_bitrate="4000
     # Initialize tqdm progress bar
     with tqdm(total=total_duration, unit="s") as bar:
         while True:
-            line = process.stderr.readline()
+            line = process.stderr.readline() # type: ignore
             if not line:
                 break
             if match := progress_pattern.search(line):
@@ -66,4 +66,4 @@ def compress_with_ffmpeg(input_file: str, output_file: str, target_bitrate="4000
     else:
         setattr(builtins, "compression", "error")
         print("Compression failed with return code", process.returncode)
-        print("Error message:", process.stderr.read())
+        print("Error message:", process.stderr.read()) # type: ignore
