@@ -7,7 +7,7 @@ from image_editing_functions import fix_frame
 from compression import compress_with_ffmpeg
 import customtkinter as ctk  # type: ignore
 import threading
-from math import ceil
+from tqdm.contrib.concurrent import process_map  # type: ignore
 
 
 from ui_functions import (
@@ -47,6 +47,11 @@ def process_video_frame(video_capture, params):
     return fix_frame(frame, **params) if ret else None
 
 
+def fix_frame_process(params):
+    frame, params = params
+    return fix_frame(frame, **params)
+
+
 def run_script():
     global stop_script
     file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
@@ -61,25 +66,7 @@ def run_script():
             break
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
 
-        video_capture = cv2.VideoCapture(str(file_path))
-        frame_rate = video_capture.get(cv2.CAP_PROP_FPS)
-        total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
-
-        output_path = fix_output_path_name(target_path, file_path)
-        out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))
-        frame_count = list(range(min(total_frames, MAX_FRAMES)))
-
-        fixed_frames = [
-            process_video_frame(video_capture, params)
-            for frame_idx in tqdm(frame_count, desc="Fixing Frames")
-            if (not skip_frame(frame_idx, speed_percentage) and not stop_script)
-        ]
-        for frame in tqdm(fixed_frames, desc="Writing Frames"):
-            out.write(frame)
-
-        # Release resources
-        video_capture.release()
-        out.release()
+        output_path = process_video(target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path)
         if stop_script:
             return
         # --------------------------------
@@ -91,6 +78,32 @@ def run_script():
     builtins.message.configure(text="Done!")
 
     cv2.destroyAllWindows()
+
+
+def process_video(target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path):
+    video_capture = cv2.VideoCapture(str(file_path))
+    frame_rate = video_capture.get(cv2.CAP_PROP_FPS)
+    total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
+
+    output_path = fix_output_path_name(target_path, file_path)
+    out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))
+    frame_count = list(range(min(total_frames, MAX_FRAMES)))
+    in_memory_frames = [
+        video_capture.read()[1]
+        for frame_idx in tqdm(frame_count, desc="Loading Frames")
+        if (not skip_frame(frame_idx, speed_percentage) and not stop_script)
+    ]
+    fixed_frames = process_map(
+        fix_frame_process, [(frame, params) for frame in in_memory_frames], max_workers=4, desc="Fixing Frames"
+    )
+
+    for frame in tqdm(fixed_frames, desc="Writing Frames"):
+        out.write(frame)
+
+        # Release resources
+    video_capture.release()
+    out.release()
+    return output_path
 
 
 def fix_output_path_name(target_path, file_path):
@@ -142,8 +155,8 @@ def main():
         fg_color="grey",
     ).pack(side=ctk.LEFT, padx=10)
 
-    builtins.speed_slider = create_slider(left_frame, "Speed %", -100, 100, 20)
-    builtins.zoom_slider = create_slider(left_frame, "Zoom %", 0, 100, 60)
+    builtins.speed_slider = create_slider(left_frame, "Speed %", 0, 100, 30)
+    builtins.zoom_slider = create_slider(left_frame, "Zoom %", 0, 100, 40)
     builtins.shift_left = create_slider(left_frame, "Shift →", -1000, 1000, 0)
     builtins.shift_down = create_slider(left_frame, "shift ↓ ", -1000, 1000, 0)
     builtins.sharpen_slider = create_slider(left_frame, "Sharpen %", -100, 100, 0)

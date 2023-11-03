@@ -144,11 +144,11 @@
         "documentation": {}
     },
     {
-        "label": "ceil",
-        "importPath": "math",
-        "description": "math",
+        "label": "process_map",
+        "importPath": "tqdm.contrib.concurrent",
+        "description": "tqdm.contrib.concurrent",
         "isExtraImport": true,
-        "detail": "math",
+        "detail": "tqdm.contrib.concurrent",
         "documentation": {}
     },
     {
@@ -428,7 +428,16 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def process_video_frame(video_capture, params):\n    ret, frame = video_capture.read()\n    return fix_frame(frame, **params) if ret else None\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    MAX_FRAMES = params[\"max_frames\"]",
+        "peekOfCode": "def process_video_frame(video_capture, params):\n    ret, frame = video_capture.read()\n    return fix_frame(frame, **params) if ret else None\ndef fix_frame_process(params):\n    frame, params = params\n    return fix_frame(frame, **params)\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "fix_frame_process",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def fix_frame_process(params):\n    frame, params = params\n    return fix_frame(frame, **params)\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    MAX_FRAMES = params[\"max_frames\"]",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -438,6 +447,15 @@
         "importPath": "video_editing_1",
         "description": "video_editing_1",
         "peekOfCode": "def run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    MAX_FRAMES = params[\"max_frames\"]\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths, desc=\"Files\"):\n        if stop_script:",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
+        "label": "process_video",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def process_video(target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path):\n    video_capture = cv2.VideoCapture(str(file_path))\n    frame_rate = video_capture.get(cv2.CAP_PROP_FPS)\n    total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))\n    output_path = fix_output_path_name(target_path, file_path)\n    out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))\n    frame_count = list(range(min(total_frames, MAX_FRAMES)))\n    in_memory_frames = [\n        video_capture.read()[1]\n        for frame_idx in tqdm(frame_count, desc=\"Loading Frames\")",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -527,7 +545,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "stop_script = False\ndef process_video_frame(video_capture, params):\n    ret, frame = video_capture.read()\n    return fix_frame(frame, **params) if ret else None\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()",
+        "peekOfCode": "stop_script = False\ndef process_video_frame(video_capture, params):\n    ret, frame = video_capture.read()\n    return fix_frame(frame, **params) if ret else None\ndef fix_frame_process(params):\n    frame, params = params\n    return fix_frame(frame, **params)\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))",
         "detail": "video_editing_1",
         "documentation": {}
     }
