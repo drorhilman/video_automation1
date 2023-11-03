@@ -24,6 +24,12 @@ DEFAULT_SOURCE = "C:\\Users\\Ben\\Desktop\\before"
 DEFAULT_TARGET = "C:\\Users\\Ben\\Desktop\\after"
 MAX_FRAMES = 100000000
 
+
+def skip_frame(frame_idx: int, speed_percentage: float) -> bool:
+    skip_interval = int(1 / (speed_percentage / 100.0))
+    return frame_idx % skip_interval == 0
+
+
 if Path("test/input").exists():
     DEFAULT_SOURCE = "test/input"
     DEFAULT_TARGET = "test/output"
@@ -48,29 +54,20 @@ def run_script():
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
 
         video_capture = cv2.VideoCapture(str(file_path))
-        new_frame_rate = speed(video_capture, percentage=speed_percentage)
+        frame_rate = video_capture.get(cv2.CAP_PROP_FPS)
         total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
 
-        output_path = (
-            str(Path(target_path) / file_path.name)
-            .replace(".mov", ".mp4")
-            .replace(".MOV", ".mp4")
-        )
-        out = cv2.VideoWriter(output_path, fourcc, new_frame_rate, (width, height))
+        output_path = fix_output_path_name(target_path, file_path)
+        out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))
 
-        for frame_idx in tqdm(list(range(total_frames)[:MAX_FRAMES])):
-            builtins.message.configure(
-                text=f"Fixing frame: {frame_idx+1} of {Path(file_path).name} "
-            )
-            if stop_script:
-                break
-            ret, frame = video_capture.read()
-            if not ret:
-                break
+        for frame_idx in tqdm(range(min(total_frames, MAX_FRAMES))):
+            if not skip_frame(frame_idx, speed_percentage):  # Skip frames at the specified interval
+                ret, frame = video_capture.read()
+                if not ret or stop_script:
+                    break
 
-            frame = fix_frame(frame, **params)
-            out.write(frame)
-            # if i == 240: break
+                frame = fix_frame(frame, **params)
+                out.write(frame)
 
         # Release resources
         video_capture.release()
@@ -86,6 +83,10 @@ def run_script():
     builtins.message.configure(text="Done!")
 
     cv2.destroyAllWindows()
+
+
+def fix_output_path_name(target_path, file_path):
+    return str(Path(target_path) / file_path.name).replace(".mov", ".mp4").replace(".MOV", ".mp4")
 
     # Now compress the file with ffmpeg
 
@@ -112,24 +113,20 @@ def main():
     root = ctk.CTk()
     root.title("Video Frame Fixer")
 
-    left_width, right_width = 300, 800
+    left_width, right_width = 100, 1400
 
     left_frame = ctk.CTkFrame(root, width=left_width)
     left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)
     builtins.update_loaded_frame = update_loaded_frame
     # Add widgets to the left frame
-    builtins.source_path_entry = create_entry_with_label(
-        left_frame, "Source Path", DEFAULT_SOURCE
-    )
-    builtins.target_path_entry = create_entry_with_label(
-        left_frame, "Target Path", DEFAULT_TARGET
-    )
+    builtins.source_path_entry = create_entry_with_label(left_frame, "Source Path", DEFAULT_SOURCE)
+    builtins.target_path_entry = create_entry_with_label(left_frame, "Target Path", DEFAULT_TARGET)
 
     buttons_frame = ctk.CTkFrame(left_frame)
     buttons_frame.pack(pady=5, fill=ctk.X)
-    ctk.CTkButton(
-        buttons_frame, text="Original Frame", command=load_first_frame, fg_color="grey"
-    ).pack(side=ctk.LEFT, padx=10)
+    ctk.CTkButton(buttons_frame, text="Original Frame", command=load_first_frame, fg_color="grey").pack(
+        side=ctk.LEFT, padx=10
+    )
     ctk.CTkButton(
         buttons_frame,
         text="Apply Fix",
@@ -143,26 +140,20 @@ def main():
     builtins.shift_down = create_slider(left_frame, "shift ↓ ", -500, 500, 0)
     builtins.sharpen_slider = create_slider(left_frame, "Sharpen %", -100, 100, 0)
     builtins.contrast_slider = create_slider(left_frame, "Contrast %", -100, 100, 3)
-    builtins.saturation_slider = create_slider(
-        left_frame, "Saturation %", -100, 100, -20
-    )
+    builtins.saturation_slider = create_slider(left_frame, "Saturation %", -100, 100, -20)
     builtins.shadow_slider = create_slider(left_frame, "Shadow %", -100, 100, 0)
     builtins.highlight_slider = create_slider(left_frame, "Highlight %", -100, 100, 0)
 
-    builtins.max_frames = create_entry_with_label(left_frame, "max farmes:", MAX_FRAMES)
+    builtins.max_frames = create_entry_with_label(left_frame, "max frames:", MAX_FRAMES)
     builtins.width_entry = create_entry_with_label(left_frame, "width:", "3840")
     builtins.height_entry = create_entry_with_label(left_frame, "height:", "2160")
 
     # start button
     start_buttons_frame = ctk.CTkFrame(left_frame)
     start_buttons_frame.pack(pady=5, fill=ctk.X)
-    builtins.start_button = ctk.CTkButton(
-        start_buttons_frame, text="Start", command=start_script
-    )
+    builtins.start_button = ctk.CTkButton(start_buttons_frame, text="Start", command=start_script)
     builtins.start_button.pack(side=ctk.LEFT, padx=10)
-    builtins.stop_button = ctk.CTkButton(
-        start_buttons_frame, text="Stop", command=stop_running, fg_color="red"
-    )
+    builtins.stop_button = ctk.CTkButton(start_buttons_frame, text="Stop", command=stop_running, fg_color="red")
 
     # comments label:
     messages_frame = ctk.CTkFrame(left_frame)
@@ -172,11 +163,9 @@ def main():
 
     # -----------------------------------------------------------
     builtins.right_frame = ctk.CTkFrame(root, width=right_width)
-    builtins.right_frame.pack(
-        side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True
-    )
+    builtins.right_frame.pack(side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True)
 
-    center_window(root, width=left_width + right_width, height=600)
+    center_window(root, width=left_width + right_width, height=800)
 
     def repeat_update(time=200):
         update_frame_loading_on_params_change()
