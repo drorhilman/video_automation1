@@ -28,6 +28,7 @@ def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:
 
 def zoom(frame: np.ndarray, percentage: int = 60) -> np.ndarray:
     h, w, _ = frame.shape
+    percentage = 100-percentage
     crop_margin_x = w * ((100 - percentage) / 100) / 2
     crop_margin_y = h * ((100 - percentage) / 100) / 2
     x1 = int(crop_margin_x)

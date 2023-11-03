@@ -257,7 +257,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def zoom(frame: np.ndarray, percentage: int = 60) -> np.ndarray:\n    h, w, _ = frame.shape\n    crop_margin_x = w * ((100 - percentage) / 100) / 2\n    crop_margin_y = h * ((100 - percentage) / 100) / 2\n    x1 = int(crop_margin_x)\n    y1 = int(crop_margin_y)\n    x2 = int(w - crop_margin_x)\n    y2 = int(h - crop_margin_y)\n    return frame[y1:y2, x1:x2]\ndef resize_frame(frame: np.ndarray, width: int, height: int):",
+        "peekOfCode": "def zoom(frame: np.ndarray, percentage: int = 60) -> np.ndarray:\n    h, w, _ = frame.shape\n    percentage = 100-percentage\n    crop_margin_x = w * ((100 - percentage) / 100) / 2\n    crop_margin_y = h * ((100 - percentage) / 100) / 2\n    x1 = int(crop_margin_x)\n    y1 = int(crop_margin_y)\n    x2 = int(w - crop_margin_x)\n    y2 = int(h - crop_margin_y)\n    return frame[y1:y2, x1:x2]",
         "detail": "image_editing_functions",
         "documentation": {}
     },

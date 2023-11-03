@@ -178,6 +178,7 @@ def main():
 
     def repeat_update(time=200):
         update_frame_loading_on_params_change()
+        root.after(time, repeat_update)
 
     def on_closing():
         global stop_script
@@ -185,9 +186,9 @@ def main():
         root.destroy()
         exit()
 
-    repeat_update()
     root.protocol("WM_DELETE_WINDOW", on_closing)
     root.after(100, load_first_frame)
+    root.after(200, repeat_update)
     root.mainloop()
 
 
