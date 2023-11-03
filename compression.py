@@ -1,6 +1,7 @@
 import subprocess
 from tqdm import tqdm
 import re
+import builtins
 
 progress_pattern = re.compile(r"time=(\d+:\d+:\d+\.\d+)")
 
@@ -53,12 +54,16 @@ def compress_with_ffmpeg(input_file: str, output_file: str, target_bitrate="4000
                 time_str = match.group(1)
                 hours, minutes, seconds = map(float, time_str.split(":"))
                 current_time = hours * 3600 + minutes * 60 + seconds
+                setattr(builtins, "compression", current_time)
                 bar.update(current_time - bar.n)  # update progress bar
 
     # Check if the compression finished successfully
+    setattr(builtins, "compression", "started")
     process.wait()  # Wait for the ffmpeg process to finish
     if process.returncode == 0:
+        setattr(builtins, "compression", "Done")
         print("Compression finished successfully.")
     else:
+        setattr(builtins, "compression", "error")
         print("Compression failed with return code", process.returncode)
         print("Error message:", process.stderr.read())

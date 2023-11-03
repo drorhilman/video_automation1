@@ -34,6 +34,15 @@
         "documentation": {}
     },
     {
+        "label": "builtins",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "builtins",
+        "description": "builtins",
+        "detail": "builtins",
+        "documentation": {}
+    },
+    {
         "label": "cv2",
         "kind": 6,
         "isExtraImport": true,
@@ -49,15 +58,6 @@
         "importPath": "numpy",
         "description": "numpy",
         "detail": "numpy",
-        "documentation": {}
-    },
-    {
-        "label": "builtins",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "builtins",
-        "description": "builtins",
-        "detail": "builtins",
         "documentation": {}
     },
     {
@@ -141,6 +141,14 @@
         "importPath": "threading",
         "description": "threading",
         "detail": "threading",
+        "documentation": {}
+    },
+    {
+        "label": "ceil",
+        "importPath": "math",
+        "description": "math",
+        "isExtraImport": true,
+        "detail": "math",
         "documentation": {}
     },
     {
@@ -416,11 +424,20 @@
         "documentation": {}
     },
     {
+        "label": "process_video_frame",
+        "kind": 2,
+        "importPath": "video_editing_1",
+        "description": "video_editing_1",
+        "peekOfCode": "def process_video_frame(video_capture, params):\n    ret, frame = video_capture.read()\n    return fix_frame(frame, **params) if ret else None\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    MAX_FRAMES = params[\"max_frames\"]",
+        "detail": "video_editing_1",
+        "documentation": {}
+    },
+    {
         "label": "run_script",
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    MAX_FRAMES = params[\"max_frames\"]\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths):\n        if stop_script:",
+        "peekOfCode": "def run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    MAX_FRAMES = params[\"max_frames\"]\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths, desc=\"Files\"):\n        if stop_script:",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -510,7 +527,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "stop_script = False\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()\n    MAX_FRAMES = params[\"max_frames\"]\n    builtins.message.configure(text=\"Running...\")\n    for file_path in tqdm(file_paths):",
+        "peekOfCode": "stop_script = False\ndef process_video_frame(video_capture, params):\n    ret, frame = video_capture.read()\n    return fix_frame(frame, **params) if ret else None\ndef run_script():\n    global stop_script\n    file_paths = list(Path(builtins.source_path_entry.get()).glob(\"*.*\"))\n    target_path = builtins.target_path_entry.get()\n    speed_percentage = float(builtins.speed_slider[0].get())\n    params, width, height = get_params_from_ui()",
         "detail": "video_editing_1",
         "documentation": {}
     }

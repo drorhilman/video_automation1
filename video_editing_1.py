@@ -7,6 +7,7 @@ from image_editing_functions import fix_frame
 from compression import compress_with_ffmpeg
 import customtkinter as ctk  # type: ignore
 import threading
+from math import ceil
 
 
 from ui_functions import (
@@ -41,6 +42,11 @@ if Path("test/input").exists():
 stop_script = False
 
 
+def process_video_frame(video_capture, params):
+    ret, frame = video_capture.read()
+    return fix_frame(frame, **params) if ret else None
+
+
 def run_script():
     global stop_script
     file_paths = list(Path(builtins.source_path_entry.get()).glob("*.*"))
@@ -50,7 +56,7 @@ def run_script():
     MAX_FRAMES = params["max_frames"]
     builtins.message.configure(text="Running...")
 
-    for file_path in tqdm(file_paths):
+    for file_path in tqdm(file_paths, desc="Files"):
         if stop_script:
             break
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
@@ -61,15 +67,15 @@ def run_script():
 
         output_path = fix_output_path_name(target_path, file_path)
         out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))
+        frame_count = list(range(min(total_frames, MAX_FRAMES)))
 
-        for frame_idx in tqdm(range(min(total_frames, MAX_FRAMES))):
-            if not skip_frame(frame_idx, speed_percentage):  # Skip frames at the specified interval
-                ret, frame = video_capture.read()
-                if not ret or stop_script:
-                    break
-
-                frame = fix_frame(frame, **params)
-                out.write(frame)
+        fixed_frames = [
+            process_video_frame(video_capture, params)
+            for frame_idx in tqdm(frame_count, desc="Fixing Frames")
+            if (not skip_frame(frame_idx, speed_percentage) and not stop_script)
+        ]
+        for frame in tqdm(fixed_frames, desc="Writing Frames"):
+            out.write(frame)
 
         # Release resources
         video_capture.release()
