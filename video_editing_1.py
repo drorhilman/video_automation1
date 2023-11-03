@@ -144,11 +144,11 @@ def main():
 
     builtins.speed_slider = create_slider(left_frame, "Speed %", -100, 100, 20)
     builtins.zoom_slider = create_slider(left_frame, "Zoom %", 0, 100, 60)
-    builtins.shift_left = create_slider(left_frame, "Shift →", -500, 500, 0)
-    builtins.shift_down = create_slider(left_frame, "shift ↓ ", -500, 500, 0)
+    builtins.shift_left = create_slider(left_frame, "Shift →", -1000, 1000, 0)
+    builtins.shift_down = create_slider(left_frame, "shift ↓ ", -1000, 1000, 0)
     builtins.sharpen_slider = create_slider(left_frame, "Sharpen %", -100, 100, 0)
-    builtins.contrast_slider = create_slider(left_frame, "Contrast %", -100, 100, 3)
-    builtins.saturation_slider = create_slider(left_frame, "Saturation %", -100, 100, -20)
+    builtins.contrast_slider = create_slider(left_frame, "Contrast %", -100, 100, 0)
+    builtins.saturation_slider = create_slider(left_frame, "Saturation %", -100, 100, 0)
     builtins.shadow_slider = create_slider(left_frame, "Shadow %", -100, 100, 0)
     builtins.highlight_slider = create_slider(left_frame, "Highlight %", -100, 100, 0)
 
@@ -176,7 +176,7 @@ def main():
 
     center_window(root, width=left_width + right_width, height=800)
 
-    def repeat_update(time=200):
+    def repeat_update(time=50):
         update_frame_loading_on_params_change()
         root.after(time, repeat_update)
 

@@ -76,8 +76,8 @@ def create_slider(root, label, from_, to_, initial_value):
     slider.pack(fill=ctk.X, side=ctk.RIGHT, expand=True, padx=5)
 
     var.trace_add("write", update_slider)
-    slider.bind("<B1-Motion>", lambda *args: update_var())  # Adjusted event binding
-
+    slider.bind("<B1-Motion>", lambda *args: update_var()) 
+    slider.bind("<Button-1>", lambda *args: update_var())
     return slider, var
 
 
