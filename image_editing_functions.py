@@ -93,8 +93,8 @@ def add_highlight(frame: np.ndarray, percentage: float):
     
     highlight_threshold = max_threshold - (abs(percentage) / 100.0) * (max_threshold - min_threshold)
     
-    
-    soft_mask = np.clip((l_channel - highlight_threshold) / (255 - highlight_threshold), 0, 1)
+    highlight_diff = 255 - highlight_threshold
+    soft_mask = np.clip((l_channel.astype(np.float32) - highlight_threshold) / highlight_diff, 0, 1)
     adjustment_factor = 1 + (percentage / percentage_fix)
     l_channel_adjusted = l_channel * (1 + soft_mask * (adjustment_factor - 1))
     l_channel_adjusted = np.clip(l_channel_adjusted, 0, 255).astype(np.uint8)
