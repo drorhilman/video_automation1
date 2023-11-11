@@ -163,7 +163,7 @@ def main():
     builtins.contrast_slider = create_slider(left_frame, "Contrast %", -100, 100, 0)
     builtins.saturation_slider = create_slider(left_frame, "Saturation %", -100, 100, 0)
     builtins.shadow_slider = create_slider(left_frame, "Shadow %", -100, 100, 0)
-    builtins.highlight_slider = create_slider(left_frame, "Highlight %", -100, 100, 0)
+    builtins.highlight_slider = create_slider(left_frame, "White %", -100, 100, 0)
 
     builtins.max_frames = create_entry_with_label(left_frame, "max frames:", MAX_FRAMES)
     builtins.bitrate = create_entry_with_label(left_frame, "bitrate:", BITRATE)
@@ -189,7 +189,7 @@ def main():
 
     center_window(root, width=left_width + right_width, height=800)
 
-    def repeat_update(time=50):
+    def repeat_update(time=100):
         update_frame_loading_on_params_change()
         root.after(time, repeat_update)
 

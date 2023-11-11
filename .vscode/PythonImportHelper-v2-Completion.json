@@ -239,7 +239,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def shift_frame(frame: np.ndarray, x: int, y: int):\n    if x == 0 and y == 0:\n        return frame\n    h, w, _ = frame.shape\n    M = np.float32([[1, 0, x], [0, 1, y]])  # type: ignore\n    return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])  # type: ignore\ndef sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:\n    \"\"\"\n    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.\n    \"\"\"",
+        "peekOfCode": "def shift_frame(frame: np.ndarray, x: int, y: int):\n    if x == 0 and y == 0:\n        return frame\n    h, w, _ = frame.shape\n    M = np.float32([[1, 0, x], [0, 1, y]])  # type: ignore\n    return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])  # type: ignore\ndef sharpen_image(frame: np.ndarray, percentage: float, color_preservation=False) -> np.ndarray:\n    if percentage == 0:\n        return frame\n    percentage = max(0, min(100, percentage)) / 100",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -248,7 +248,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:\n    \"\"\"\n    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.\n    \"\"\"\n    if percentage == 0:\n        return frame\n    percentage = max(0, min(100, percentage)) / 100\n    frame_float = frame.astype(np.float64)\n    blurred = cv2.GaussianBlur(frame_float, (0, 0), sigmaX=3, sigmaY=3)\n    sharpened = cv2.addWeighted(frame_float, 1.0 + percentage, blurred, -percentage, 0)",
+        "peekOfCode": "def sharpen_image(frame: np.ndarray, percentage: float, color_preservation=False) -> np.ndarray:\n    if percentage == 0:\n        return frame\n    percentage = max(0, min(100, percentage)) / 100\n    if color_preservation:\n        frame_yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)\n        frame_yuv[..., 0] = cv2.GaussianBlur(frame_yuv[..., 0], (0, 0), sigmaX=1, sigmaY=1)\n        blurred = cv2.cvtColor(frame_yuv, cv2.COLOR_YUV2BGR)\n    else:\n        blurred = cv2.GaussianBlur(frame, (0, 0), sigmaX=3, sigmaY=3)",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -311,7 +311,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def add_shadow(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    shadow_intensity = percentage / 100.0\n    shadow_frame = frame * (1 - shadow_intensity)\n    return shadow_frame.astype(np.uint8)\ndef add_highlight(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    highlight_intensity = percentage / 100.0",
+        "peekOfCode": "def add_shadow(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    shadow_intensity = percentage / 100.0\n    shadow_frame = frame * (1 - shadow_intensity)\n    return shadow_frame.astype(np.uint8)\ndef add_highlight(frame: np.ndarray, percentage: float):\n    percentage_fix = 400.0\n    lab = cv2.cvtColor(frame, cv2.COLOR_RGB2LAB)\n    l_channel, a_channel, b_channel = cv2.split(lab)",
         "detail": "image_editing_functions",
         "documentation": {}
     },
@@ -320,7 +320,7 @@
         "kind": 2,
         "importPath": "image_editing_functions",
         "description": "image_editing_functions",
-        "peekOfCode": "def add_highlight(frame: np.ndarray, percentage: float):\n    if percentage == 0:\n        return frame\n    highlight_intensity = percentage / 100.0\n    highlight_frame = frame + (255 - frame) * highlight_intensity\n    np.clip(highlight_frame, 0, 255, out=highlight_frame)\n    return highlight_frame.astype(np.uint8)\ndef fix_frame(\n    frame,\n    zoom_percentage=60,",
+        "peekOfCode": "def add_highlight(frame: np.ndarray, percentage: float):\n    percentage_fix = 400.0\n    lab = cv2.cvtColor(frame, cv2.COLOR_RGB2LAB)\n    l_channel, a_channel, b_channel = cv2.split(lab)\n    # Dynamically adjust the highlight threshold based on the percentage\n    max_threshold = 180  # The maximum threshold when percentage is at its lowest\n    min_threshold = 100  # The minimum threshold when percentage is at its highest\n    if percentage < 0:\n        max_threshold = 100 \n        min_threshold = 20",
         "detail": "image_editing_functions",
         "documentation": {}
     },
