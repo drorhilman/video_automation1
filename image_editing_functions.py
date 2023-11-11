@@ -11,18 +11,20 @@ def shift_frame(frame: np.ndarray, x: int, y: int):
     return cv2.warpAffine(frame, M, (w, h), borderValue=[255, 255, 255])  # type: ignore
 
 
-def sharpen_image(frame: np.ndarray, percentage: float) -> np.ndarray:
-    """
-    Sharpens the given frame using an unsharp mask with the specified sharpening percentage.
-    """
+def sharpen_image(frame: np.ndarray, percentage: float, color_preservation=False) -> np.ndarray:
     if percentage == 0:
         return frame
     percentage = max(0, min(100, percentage)) / 100
-    frame_float = frame.astype(np.float64)
-    blurred = cv2.GaussianBlur(frame_float, (0, 0), sigmaX=3, sigmaY=3)
-    sharpened = cv2.addWeighted(frame_float, 1.0 + percentage, blurred, -percentage, 0)
-    # Convert the sharpened frame back to uint8 format for displaying or saving
-    sharpened = sharpened.astype(np.uint8)
+
+    if color_preservation:
+        frame_yuv = cv2.cvtColor(frame, cv2.COLOR_BGR2YUV)
+        frame_yuv[..., 0] = cv2.GaussianBlur(frame_yuv[..., 0], (0, 0), sigmaX=1, sigmaY=1)
+        blurred = cv2.cvtColor(frame_yuv, cv2.COLOR_YUV2BGR)
+    else:
+        blurred = cv2.GaussianBlur(frame, (0, 0), sigmaX=3, sigmaY=3)
+
+    sharpened = cv2.addWeighted(frame, 1.0 + percentage, blurred, -percentage, 0)
+    sharpened = np.clip(sharpened, 0, 255)  # Clipping to ensure values are in the valid range
     return sharpened
 
 

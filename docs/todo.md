@@ -1,4 +1,7 @@
 # Todo:
+- [ ] check why it does not use the ui_functions module (branching issues?)
+- [ ] highlight - seems to woek like 'shadow' - it is expected to only affect the bright parts, but it seems to add colors to the diamond. (act like the shadow of the premiere?)
+
 
 ## 2023-11-03
 
