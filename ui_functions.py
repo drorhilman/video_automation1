@@ -37,8 +37,8 @@ def display_frame(frame, right_frame):
 
 
 def create_slider(root, label, from_, to_, initial_value):
-    frame = ctk.CTkFrame(root)  # Create a frame without padding
-    frame.pack(padx=10, pady=2, fill=ctk.X, expand=True)  # Apply padding during packing
+    frame = ctk.CTkFrame(root)
+    frame.pack(padx=10, pady=2, fill=ctk.X, expand=True)
 
     ctk.CTkLabel(frame, text=label, font=("Arial", 12), width=80).pack(
         side=ctk.LEFT, padx=5, anchor="w"
@@ -49,18 +49,24 @@ def create_slider(root, label, from_, to_, initial_value):
 
     def update_slider(*args):
         val = var.get()
-        if val.isdigit() or (val.startswith("-") and val[1:].isdigit()):
-            slider.set(int(val))
-        else:
-            var.set(slider.get())
+        try:
+            float_val = float(val)
+            slider.set(float_val)
+        except ValueError:
+            pass  # Ignore invalid input
 
     def update_var(*args):
-        var.set(int(slider.get()))
+        var.set(str(slider.get()))
+
+    def is_float(value):
+        try:
+            float(value)
+            return True
+        except ValueError:
+            return False
 
     validate_cmd = root.register(
-        lambda value: value.isdigit()
-        or (value.startswith("-") and value[1:].isdigit())
-        or value == ""
+        lambda value: is_float(value) or value == ""
     )
     entry = ctk.CTkEntry(
         frame,
@@ -76,7 +82,7 @@ def create_slider(root, label, from_, to_, initial_value):
     slider.pack(fill=ctk.X, side=ctk.RIGHT, expand=True, padx=5)
 
     var.trace_add("write", update_slider)
-    slider.bind("<B1-Motion>", lambda *args: update_var()) 
+    slider.bind("<B1-Motion>", lambda *args: update_var())
     slider.bind("<Button-1>", lambda *args: update_var())
     return slider, var
 

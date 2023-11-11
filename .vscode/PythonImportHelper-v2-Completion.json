@@ -356,7 +356,7 @@
         "kind": 2,
         "importPath": "ui_functions",
         "description": "ui_functions",
-        "peekOfCode": "def create_slider(root, label, from_, to_, initial_value):\n    frame = ctk.CTkFrame(root)  # Create a frame without padding\n    frame.pack(padx=10, pady=2, fill=ctk.X, expand=True)  # Apply padding during packing\n    ctk.CTkLabel(frame, text=label, font=(\"Arial\", 12), width=80).pack(\n        side=ctk.LEFT, padx=5, anchor=\"w\"\n    )\n    var = ctk.StringVar()\n    var.set(initial_value)\n    def update_slider(*args):\n        val = var.get()",
+        "peekOfCode": "def create_slider(root, label, from_, to_, initial_value):\n    frame = ctk.CTkFrame(root)\n    frame.pack(padx=10, pady=2, fill=ctk.X, expand=True)\n    ctk.CTkLabel(frame, text=label, font=(\"Arial\", 12), width=80).pack(\n        side=ctk.LEFT, padx=5, anchor=\"w\"\n    )\n    var = ctk.StringVar()\n    var.set(initial_value)\n    def update_slider(*args):\n        val = var.get()",
         "detail": "ui_functions",
         "documentation": {}
     },
