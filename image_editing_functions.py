@@ -78,12 +78,31 @@ def add_shadow(frame: np.ndarray, percentage: float):
 
 
 def add_highlight(frame: np.ndarray, percentage: float):
-    if percentage == 0:
-        return frame
-    highlight_intensity = percentage / 100.0
-    highlight_frame = frame + (255 - frame) * highlight_intensity
-    np.clip(highlight_frame, 0, 255, out=highlight_frame)
-    return highlight_frame.astype(np.uint8)
+    # Convert the image from RGB to LAB color space
+    percentage_fix = 300.0
+    lab = cv2.cvtColor(frame, cv2.COLOR_RGB2LAB)
+    l_channel, a_channel, b_channel = cv2.split(lab)
+
+    # Create a softer mask for highlights
+    # The mask intensity is proportional to the brightness above a certain threshold
+    highlight_threshold = 100  # Lower threshold for a more gradual effect
+    soft_mask = np.clip((l_channel - highlight_threshold) / (255 - highlight_threshold), 0, 1)
+
+    # Calculate the adjustment factor based on the percentage
+    adjustment_factor = 1 + (percentage / percentage_fix)
+
+    # Apply the adjustment factor using the soft mask
+    l_channel_adjusted = l_channel * (1 + soft_mask * (adjustment_factor - 1))
+
+    # Ensure l_channel_adjusted is the same data type and size as the original l_channel
+    l_channel_adjusted = np.clip(l_channel_adjusted, 0, 255).astype(np.uint8)
+
+    # Merge the adjusted L channel back with the A and B channels
+    adjusted_lab = cv2.merge([l_channel_adjusted, a_channel, b_channel])
+    adjusted_frame = cv2.cvtColor(adjusted_lab, cv2.COLOR_LAB2RGB)
+
+    return adjusted_frame
+
 
 
 def fix_frame(
