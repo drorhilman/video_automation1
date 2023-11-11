@@ -94,7 +94,7 @@ def process_video(target_path, speed_percentage, params, width, height, MAX_FRAM
         if (not skip_frame(frame_idx, speed_percentage) and not stop_script)
     ]
     fixed_frames = process_map(
-        fix_frame_process, [(frame, params) for frame in in_memory_frames], max_workers=4, desc="Fixing Frames"
+        fix_frame_process, [(frame, params) for frame in in_memory_frames], max_workers=8, desc="Fixing Frames"
     )
 
     for frame in tqdm(fixed_frames, desc="Writing Frames"):

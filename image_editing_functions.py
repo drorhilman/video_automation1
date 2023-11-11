@@ -1,4 +1,9 @@
 import cv2
+print("OpenCL available:", cv2.ocl.haveOpenCL())
+if cv2.ocl.haveOpenCL():
+    cv2.ocl.setUseOpenCL(True)
+    print("OpenCL enabled")
+
 import numpy as np
 import builtins
 
