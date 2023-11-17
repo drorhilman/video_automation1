@@ -8,6 +8,7 @@ from compression import compress_with_ffmpeg
 import customtkinter as ctk  # type: ignore
 import threading
 from tqdm.contrib.concurrent import process_map  # type: ignore
+import shutil
 
 
 from ui_functions import (
@@ -29,8 +30,17 @@ BITRATE = "4000k"
 
 
 def skip_frame(frame_idx: int, speed_percentage: float) -> bool:
-    skip_interval = int(1 / (speed_percentage / 100.0))
-    return frame_idx % skip_interval == 0
+    if speed_percentage == 0:
+        return False  # No skipping if speed is 100%
+
+    # e.g., 30% increase means 1.3 times the original frame rate
+    frame_rate_multiplier = 1 + (speed_percentage / 100)
+
+    # Calculate the skip factor, For 130% speed, we want to keep 100/130 of the frames
+    skip_factor = 1 - (1 / frame_rate_multiplier)
+
+    # Now, we skip frames based on the skip factor. We skip a frame if the current index divided by total frames is less than skip factor
+    return (frame_idx % int(1 / skip_factor)) != 0
 
 
 if Path("test/input").exists():
@@ -66,37 +76,56 @@ def run_script():
             break
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
 
-        output_path = process_video(target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path)
+        output_path = process_video(
+            target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path
+        )
         if stop_script:
             return
         # --------------------------------
         print(f"{file_path}: {os.path.getsize(file_path) / 1024000:.3f} MB")
         print(f"Compressing {output_path}... into {output_path}_compressed.mp4")
         builtins.message.configure(text=f"Compressing Image: {Path(file_path).name} ")
-        compress_with_ffmpeg(output_path, f"{output_path}_compressed.mp4", target_bitrate=builtins.bitrate.get())
+        compress_with_ffmpeg(
+            output_path,
+            f"{output_path}_compressed.mp4",
+            target_bitrate=builtins.bitrate.get(),
+        )
+
+        # rename the compressed file to the original name, deletign the original...
+        shutil.move(f"{output_path}_compressed.mp4", output_path)
+
     stop_script = False
     builtins.message.configure(text="Done!")
 
     cv2.destroyAllWindows()
 
 
-def process_video(target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path):
+def process_video(
+    target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path
+):
     video_capture = cv2.VideoCapture(str(file_path))
-    frame_rate = video_capture.get(cv2.CAP_PROP_FPS)
+
     total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
 
-    output_path = fix_output_path_name(target_path, file_path)
-    out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))
+    
     frame_count = list(range(min(total_frames, MAX_FRAMES)))
+
     in_memory_frames = [
         video_capture.read()[1]
-        for frame_idx in tqdm(frame_count, desc="Loading Frames")
-        if (not skip_frame(frame_idx, speed_percentage) and not stop_script)
+        for _ in tqdm(frame_count, desc="Loading Frames")
+        if not stop_script
     ]
     fixed_frames = process_map(
-        fix_frame_process, [(frame, params) for frame in in_memory_frames], max_workers=8, desc="Fixing Frames"
+        fix_frame_process,
+        [(frame, params) for frame in in_memory_frames],
+        max_workers=8,
+        desc="Fixing Frames",
     )
-
+    
+    frame_rate = video_capture.get(cv2.CAP_PROP_FPS)
+    frame_rate = int((speed_percentage+100)/100 * frame_rate)
+    output_path = fix_output_path_name(target_path, file_path)
+    out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))
     for frame in tqdm(fixed_frames, desc="Writing Frames"):
         out.write(frame)
 
@@ -107,7 +136,11 @@ def process_video(target_path, speed_percentage, params, width, height, MAX_FRAM
 
 
 def fix_output_path_name(target_path, file_path):
-    return str(Path(target_path) / file_path.name).replace(".mov", ".mp4").replace(".MOV", ".mp4")
+    return (
+        str(Path(target_path) / file_path.name)
+        .replace(".mov", ".mp4")
+        .replace(".MOV", ".mp4")
+    )
 
     # Now compress the file with ffmpeg
 
@@ -140,14 +173,18 @@ def main():
     left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)
     builtins.update_loaded_frame = update_loaded_frame
     # Add widgets to the left frame
-    builtins.source_path_entry = create_entry_with_label(left_frame, "Source Path", DEFAULT_SOURCE)
-    builtins.target_path_entry = create_entry_with_label(left_frame, "Target Path", DEFAULT_TARGET)
+    builtins.source_path_entry = create_entry_with_label(
+        left_frame, "Source Path", DEFAULT_SOURCE
+    )
+    builtins.target_path_entry = create_entry_with_label(
+        left_frame, "Target Path", DEFAULT_TARGET
+    )
 
     buttons_frame = ctk.CTkFrame(left_frame)
     buttons_frame.pack(pady=5, fill=ctk.X)
-    ctk.CTkButton(buttons_frame, text="Original Frame", command=load_first_frame, fg_color="grey").pack(
-        side=ctk.LEFT, padx=10
-    )
+    ctk.CTkButton(
+        buttons_frame, text="Original Frame", command=load_first_frame, fg_color="grey"
+    ).pack(side=ctk.LEFT, padx=10)
     ctk.CTkButton(
         buttons_frame,
         text="Apply Fix",
@@ -173,9 +210,13 @@ def main():
     # start button
     start_buttons_frame = ctk.CTkFrame(left_frame)
     start_buttons_frame.pack(pady=5, fill=ctk.X)
-    builtins.start_button = ctk.CTkButton(start_buttons_frame, text="Start", command=start_script)
+    builtins.start_button = ctk.CTkButton(
+        start_buttons_frame, text="Start", command=start_script
+    )
     builtins.start_button.pack(side=ctk.LEFT, padx=10)
-    builtins.stop_button = ctk.CTkButton(start_buttons_frame, text="Stop", command=stop_running, fg_color="red")
+    builtins.stop_button = ctk.CTkButton(
+        start_buttons_frame, text="Stop", command=stop_running, fg_color="red"
+    )
 
     # comments label:
     messages_frame = ctk.CTkFrame(left_frame)
@@ -185,7 +226,9 @@ def main():
 
     # -----------------------------------------------------------
     builtins.right_frame = ctk.CTkFrame(root, width=right_width)
-    builtins.right_frame.pack(side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True)
+    builtins.right_frame.pack(
+        side=ctk.RIGHT, padx=10, pady=10, fill=ctk.BOTH, expand=True
+    )
 
     center_window(root, width=left_width + right_width, height=800)
 

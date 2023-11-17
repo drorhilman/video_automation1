@@ -152,6 +152,15 @@
         "documentation": {}
     },
     {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
         "label": "center_window",
         "importPath": "ui_functions",
         "description": "ui_functions",
@@ -419,7 +428,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop\nstop_script = False",
+        "peekOfCode": "def skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    if speed_percentage == 0:\n        return False  # No skipping if speed is 100%\n    # e.g., 30% increase means 1.3 times the original frame rate\n    frame_rate_multiplier = 1 + (speed_percentage / 100)\n    # Calculate the skip factor, For 130% speed, we want to keep 100/130 of the frames\n    skip_factor = 1 - (1 / frame_rate_multiplier)\n    # Now, we skip frames based on the skip factor. We skip a frame if the current index divided by total frames is less than skip factor\n    return (frame_idx % int(1 / skip_factor)) != 0\nif Path(\"test/input\").exists():",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -455,7 +464,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def process_video(target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path):\n    video_capture = cv2.VideoCapture(str(file_path))\n    frame_rate = video_capture.get(cv2.CAP_PROP_FPS)\n    total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))\n    output_path = fix_output_path_name(target_path, file_path)\n    out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))\n    frame_count = list(range(min(total_frames, MAX_FRAMES)))\n    in_memory_frames = [\n        video_capture.read()[1]\n        for frame_idx in tqdm(frame_count, desc=\"Loading Frames\")",
+        "peekOfCode": "def process_video(\n    target_path, speed_percentage, params, width, height, MAX_FRAMES, file_path\n):\n    video_capture = cv2.VideoCapture(str(file_path))\n    total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))\n    frame_count = list(range(min(total_frames, MAX_FRAMES)))\n    in_memory_frames = [\n        video_capture.read()[1]\n        for _ in tqdm(frame_count, desc=\"Loading Frames\")\n        if not stop_script",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -464,7 +473,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def fix_output_path_name(target_path, file_path):\n    return str(Path(target_path) / file_path.name).replace(\".mov\", \".mp4\").replace(\".MOV\", \".mp4\")\n    # Now compress the file with ffmpeg\ndef stop_running():\n    global stop_script\n    stop_script = True\n    builtins.stop_button.pack_forget()\n    builtins.start_button.pack(side=ctk.LEFT, padx=10)\n    builtins.message.configure(text=\"Stopped!\")\ndef start_script():",
+        "peekOfCode": "def fix_output_path_name(target_path, file_path):\n    return (\n        str(Path(target_path) / file_path.name)\n        .replace(\".mov\", \".mp4\")\n        .replace(\".MOV\", \".mp4\")\n    )\n    # Now compress the file with ffmpeg\ndef stop_running():\n    global stop_script\n    stop_script = True",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -491,7 +500,7 @@
         "kind": 2,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "def main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 100, 1400\n    left_frame = ctk.CTkFrame(root, width=left_width)\n    left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)\n    builtins.update_loaded_frame = update_loaded_frame\n    # Add widgets to the left frame\n    builtins.source_path_entry = create_entry_with_label(left_frame, \"Source Path\", DEFAULT_SOURCE)\n    builtins.target_path_entry = create_entry_with_label(left_frame, \"Target Path\", DEFAULT_TARGET)",
+        "peekOfCode": "def main():\n    root = ctk.CTk()\n    root.title(\"Video Frame Fixer\")\n    left_width, right_width = 100, 1400\n    left_frame = ctk.CTkFrame(root, width=left_width)\n    left_frame.pack(side=ctk.LEFT, padx=10, pady=10, fill=ctk.Y)\n    builtins.update_loaded_frame = update_loaded_frame\n    # Add widgets to the left frame\n    builtins.source_path_entry = create_entry_with_label(\n        left_frame, \"Source Path\", DEFAULT_SOURCE",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -500,7 +509,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")  # type: ignore\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"",
+        "peekOfCode": "fourcc = cv2.VideoWriter_fourcc(*\"mp4v\")  # type: ignore\nDEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    if speed_percentage == 0:\n        return False  # No skipping if speed is 100%\n    # e.g., 30% increase means 1.3 times the original frame rate\n    frame_rate_multiplier = 1 + (speed_percentage / 100)",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -509,7 +518,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"",
+        "peekOfCode": "DEFAULT_SOURCE = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\before\"\nDEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    if speed_percentage == 0:\n        return False  # No skipping if speed is 100%\n    # e.g., 30% increase means 1.3 times the original frame rate\n    frame_rate_multiplier = 1 + (speed_percentage / 100)\n    # Calculate the skip factor, For 130% speed, we want to keep 100/130 of the frames",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -518,7 +527,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100",
+        "peekOfCode": "DEFAULT_TARGET = \"C:\\\\Users\\\\Ben\\\\Desktop\\\\after\"\nMAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    if speed_percentage == 0:\n        return False  # No skipping if speed is 100%\n    # e.g., 30% increase means 1.3 times the original frame rate\n    frame_rate_multiplier = 1 + (speed_percentage / 100)\n    # Calculate the skip factor, For 130% speed, we want to keep 100/130 of the frames\n    skip_factor = 1 - (1 / frame_rate_multiplier)",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -527,7 +536,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "MAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================",
+        "peekOfCode": "MAX_FRAMES = 100000000\nBITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    if speed_percentage == 0:\n        return False  # No skipping if speed is 100%\n    # e.g., 30% increase means 1.3 times the original frame rate\n    frame_rate_multiplier = 1 + (speed_percentage / 100)\n    # Calculate the skip factor, For 130% speed, we want to keep 100/130 of the frames\n    skip_factor = 1 - (1 / frame_rate_multiplier)\n    # Now, we skip frames based on the skip factor. We skip a frame if the current index divided by total frames is less than skip factor",
         "detail": "video_editing_1",
         "documentation": {}
     },
@@ -536,7 +545,7 @@
         "kind": 5,
         "importPath": "video_editing_1",
         "description": "video_editing_1",
-        "peekOfCode": "BITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    skip_interval = int(1 / (speed_percentage / 100.0))\n    return frame_idx % skip_interval == 0\nif Path(\"test/input\").exists():\n    DEFAULT_SOURCE = \"test/input\"\n    DEFAULT_TARGET = \"test/output\"\n    MAX_FRAMES = 100\n# ==========================   UI     ================================\n# Global flag to check if the script should stop",
+        "peekOfCode": "BITRATE = \"4000k\"\ndef skip_frame(frame_idx: int, speed_percentage: float) -> bool:\n    if speed_percentage == 0:\n        return False  # No skipping if speed is 100%\n    # e.g., 30% increase means 1.3 times the original frame rate\n    frame_rate_multiplier = 1 + (speed_percentage / 100)\n    # Calculate the skip factor, For 130% speed, we want to keep 100/130 of the frames\n    skip_factor = 1 - (1 / frame_rate_multiplier)\n    # Now, we skip frames based on the skip factor. We skip a frame if the current index divided by total frames is less than skip factor\n    return (frame_idx % int(1 / skip_factor)) != 0",
         "detail": "video_editing_1",
         "documentation": {}
     },
