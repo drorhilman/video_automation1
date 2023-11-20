@@ -106,28 +106,18 @@ def process_video(
     video_capture = cv2.VideoCapture(str(file_path))
 
     total_frames = int(video_capture.get(cv2.CAP_PROP_FRAME_COUNT))
-
-    
-    frame_count = list(range(min(total_frames, MAX_FRAMES)))
-
-    in_memory_frames = [
-        video_capture.read()[1]
-        for _ in tqdm(frame_count, desc="Loading Frames")
-        if not stop_script
-    ]
-    fixed_frames = process_map(
-        fix_frame_process,
-        [(frame, params) for frame in in_memory_frames],
-        max_workers=8,
-        desc="Fixing Frames",
-    )
-    
     frame_rate = video_capture.get(cv2.CAP_PROP_FPS)
     frame_rate = int((speed_percentage+100)/100 * frame_rate)
     output_path = fix_output_path_name(target_path, file_path)
     out = cv2.VideoWriter(output_path, fourcc, frame_rate, (width, height))
-    for frame in tqdm(fixed_frames, desc="Writing Frames"):
-        out.write(frame)
+    
+    frame_count = list(range(min(total_frames, MAX_FRAMES)))
+    for _ in tqdm(frame_count, desc="Loading Frames"):
+        if not stop_script:
+            frame = video_capture.read()[1]
+            fixed = fix_frame_process((frame, params))
+            out.write(fixed)
+    
 
         # Release resources
     video_capture.release()
